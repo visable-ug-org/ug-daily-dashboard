@@ -1,0 +1,582 @@
+{
+  "meta": {
+    "date": "2026-04-05",
+    "wow_date": "2026-03-29",
+    "latency_days": 2,
+    "generated_at": "2026-04-06T16:19:20.289Z"
+  },
+  "summary": {
+    "ep": {
+      "web_uv": 15375,
+      "web_uv_prev": 18044,
+      "app_uv": 840,
+      "app_uv_prev": 2938,
+      "ab": 341,
+      "ab_prev": 368,
+      "qdr_ab": 223,
+      "qdr_ab_prev": 205,
+      "rfq_ab": 136,
+      "rfq_ab_prev": 180,
+      "ab2": 72,
+      "ab2_prev": 69
+    },
+    "wlw": {
+      "web_uv": 13981,
+      "web_uv_prev": 19049,
+      "app_uv": 144,
+      "app_uv_prev": 852,
+      "ab": 97,
+      "ab_prev": 156,
+      "qdr_ab": 49,
+      "qdr_ab_prev": 88,
+      "rfq_ab": 49,
+      "rfq_ab_prev": 70,
+      "ab2": 6,
+      "ab2_prev": 5
+    },
+    "d_ab2": {
+      "ep": 72,
+      "wlw": 6,
+      "total": 78,
+      "target": 500,
+      "gap_pct": 84.4
+    },
+    "ab_to_ab2_pct": {
+      "ep": 21.1,
+      "wlw": 6.2,
+      "ep_prev": 18.8,
+      "wlw_prev": 3.2
+    }
+  },
+  "trends": {
+    "labels": [
+      "03/23",
+      "03/24",
+      "03/25",
+      "03/26",
+      "03/27",
+      "03/28",
+      "03/29",
+      "03/30",
+      "03/31",
+      "04/01",
+      "04/02",
+      "04/03",
+      "04/04",
+      "04/05"
+    ],
+    "ep_uv": [
+      31807,
+      32149,
+      32091,
+      31606,
+      28027,
+      17956,
+      18044,
+      32261,
+      31328,
+      29651,
+      28148,
+      22906,
+      15901,
+      15375
+    ],
+    "wlw_uv": [
+      31158,
+      30389,
+      31114,
+      30201,
+      25729,
+      17338,
+      19049,
+      29522,
+      27873,
+      24577,
+      23006,
+      17507,
+      13406,
+      13981
+    ],
+    "ep_app": [
+      1475,
+      1685,
+      1773,
+      2523,
+      2298,
+      2877,
+      2938,
+      1495,
+      1327,
+      1052,
+      1188,
+      972,
+      836,
+      840
+    ],
+    "wlw_app": [
+      387,
+      487,
+      626,
+      641,
+      713,
+      903,
+      852,
+      413,
+      334,
+      233,
+      256,
+      244,
+      155,
+      144
+    ],
+    "ep_qdr": [
+      435,
+      367,
+      369,
+      386,
+      298,
+      205,
+      205,
+      364,
+      400,
+      331,
+      312,
+      277,
+      216,
+      223
+    ],
+    "wlw_qdr": [
+      238,
+      226,
+      237,
+      256,
+      187,
+      90,
+      88,
+      228,
+      157,
+      186,
+      154,
+      78,
+      63,
+      49
+    ],
+    "ep_rfq": [
+      367,
+      306,
+      281,
+      329,
+      234,
+      146,
+      180,
+      301,
+      320,
+      314,
+      251,
+      226,
+      150,
+      136
+    ],
+    "wlw_rfq": [
+      146,
+      120,
+      130,
+      123,
+      90,
+      67,
+      70,
+      122,
+      97,
+      109,
+      107,
+      65,
+      56,
+      49
+    ],
+    "ep_ab2": [
+      256,
+      183,
+      183,
+      208,
+      145,
+      61,
+      69,
+      212,
+      210,
+      194,
+      180,
+      143,
+      92,
+      72
+    ],
+    "wlw_ab2": [
+      58,
+      37,
+      36,
+      44,
+      40,
+      7,
+      5,
+      40,
+      25,
+      41,
+      28,
+      14,
+      7,
+      6
+    ]
+  },
+  "drilldown": {
+    "ep_uv_by_channel": [
+      {
+        "channel": "organic_search",
+        "current": 11974,
+        "prev": 14270,
+        "wow_pct": -16.1
+      },
+      {
+        "channel": "direct",
+        "current": 2148,
+        "prev": 2336,
+        "wow_pct": -8
+      },
+      {
+        "channel": "geo",
+        "current": 454,
+        "prev": 584,
+        "wow_pct": -22.3
+      },
+      {
+        "channel": "referral",
+        "current": 330,
+        "prev": 360,
+        "wow_pct": -8.3
+      },
+      {
+        "channel": "email",
+        "current": 173,
+        "prev": 182,
+        "wow_pct": -4.9
+      },
+      {
+        "channel": "display_performance",
+        "current": 151,
+        "prev": 143,
+        "wow_pct": 5.6
+      },
+      {
+        "channel": "Others",
+        "current": 97,
+        "prev": 113,
+        "wow_pct": -14.2
+      },
+      {
+        "channel": "organic_social",
+        "current": 19,
+        "prev": 29,
+        "wow_pct": -34.5
+      },
+      {
+        "channel": "other",
+        "current": 15,
+        "prev": 13,
+        "wow_pct": 15.4
+      },
+      {
+        "channel": "paid_search",
+        "current": 14,
+        "prev": 8,
+        "wow_pct": 75
+      },
+      {
+        "channel": "app",
+        "current": 0,
+        "prev": 3,
+        "wow_pct": -100
+      },
+      {
+        "channel": "organic_video",
+        "current": 0,
+        "prev": 3,
+        "wow_pct": -100
+      }
+    ],
+    "wlw_uv_by_channel": [
+      {
+        "channel": "organic_search",
+        "current": 11691,
+        "prev": 15832,
+        "wow_pct": -26.2
+      },
+      {
+        "channel": "direct",
+        "current": 1223,
+        "prev": 1633,
+        "wow_pct": -25.1
+      },
+      {
+        "channel": "paid_search",
+        "current": 578,
+        "prev": 944,
+        "wow_pct": -38.8
+      },
+      {
+        "channel": "referral",
+        "current": 183,
+        "prev": 255,
+        "wow_pct": -28.2
+      },
+      {
+        "channel": "geo",
+        "current": 158,
+        "prev": 182,
+        "wow_pct": -13.2
+      },
+      {
+        "channel": "Others",
+        "current": 54,
+        "prev": 86,
+        "wow_pct": -37.2
+      },
+      {
+        "channel": "email",
+        "current": 49,
+        "prev": 68,
+        "wow_pct": -27.9
+      },
+      {
+        "channel": "display_performance",
+        "current": 25,
+        "prev": 20,
+        "wow_pct": 25
+      },
+      {
+        "channel": "other",
+        "current": 12,
+        "prev": 20,
+        "wow_pct": -40
+      },
+      {
+        "channel": "affiliate",
+        "current": 4,
+        "prev": 7,
+        "wow_pct": -42.9
+      },
+      {
+        "channel": "organic_social",
+        "current": 3,
+        "prev": 0,
+        "wow_pct": null
+      },
+      {
+        "channel": "app",
+        "current": 1,
+        "prev": 2,
+        "wow_pct": -50
+      }
+    ],
+    "qdr_ab_by_source": [
+      {
+        "platform": "ep",
+        "source": "web",
+        "current": 96,
+        "prev": 78,
+        "ab2_current": 17,
+        "ab2_prev": 10,
+        "wow_pct": 23.1
+      },
+      {
+        "platform": "ep",
+        "source": "app",
+        "current": 89,
+        "prev": 98,
+        "ab2_current": 14,
+        "ab2_prev": 19,
+        "wow_pct": -9.2
+      },
+      {
+        "platform": "ep",
+        "source": "alibaba",
+        "current": 46,
+        "prev": 34,
+        "ab2_current": 8,
+        "ab2_prev": 5,
+        "wow_pct": 35.3
+      },
+      {
+        "platform": "wlw",
+        "source": "web",
+        "current": 34,
+        "prev": 66,
+        "ab2_current": 2,
+        "ab2_prev": 2,
+        "wow_pct": -48.5
+      },
+      {
+        "platform": "wlw",
+        "source": "app",
+        "current": 6,
+        "prev": 9,
+        "ab2_current": 2,
+        "ab2_prev": 1,
+        "wow_pct": -33.3
+      },
+      {
+        "platform": "wlw",
+        "source": "alibaba",
+        "current": 9,
+        "prev": 13,
+        "ab2_current": 1,
+        "ab2_prev": 1,
+        "wow_pct": -30.8
+      }
+    ],
+    "rfq_ab_by_source": [
+      {
+        "platform": "ep",
+        "source": "web",
+        "current": 30,
+        "prev": 28,
+        "ab2_current": 19,
+        "ab2_prev": 15,
+        "wow_pct": 7.1
+      },
+      {
+        "platform": "ep",
+        "source": "app",
+        "current": 17,
+        "prev": 25,
+        "ab2_current": 13,
+        "ab2_prev": 14,
+        "wow_pct": -32
+      },
+      {
+        "platform": "ep",
+        "source": "alibaba",
+        "current": 89,
+        "prev": 127,
+        "ab2_current": 6,
+        "ab2_prev": 8,
+        "wow_pct": -29.9
+      },
+      {
+        "platform": "wlw",
+        "source": "web",
+        "current": 3,
+        "prev": 3,
+        "ab2_current": 1,
+        "ab2_prev": 0,
+        "wow_pct": 0
+      },
+      {
+        "platform": "wlw",
+        "source": "app",
+        "current": 0,
+        "prev": 1,
+        "ab2_current": 0,
+        "ab2_prev": 1,
+        "wow_pct": -100
+      },
+      {
+        "platform": "wlw",
+        "source": "alibaba",
+        "current": 46,
+        "prev": 66,
+        "ab2_current": 0,
+        "ab2_prev": 0,
+        "wow_pct": -30.3
+      }
+    ],
+    "ab2_by_source": [
+      {
+        "platform": "ep",
+        "source": "web",
+        "current": 35,
+        "prev": 25,
+        "wow_pct": 40
+      },
+      {
+        "platform": "ep",
+        "source": "app",
+        "current": 24,
+        "prev": 32,
+        "wow_pct": -25
+      },
+      {
+        "platform": "ep",
+        "source": "alibaba",
+        "current": 14,
+        "prev": 13,
+        "wow_pct": 7.7
+      },
+      {
+        "platform": "wlw",
+        "source": "web",
+        "current": 3,
+        "prev": 2,
+        "wow_pct": 50
+      },
+      {
+        "platform": "wlw",
+        "source": "app",
+        "current": 2,
+        "prev": 2,
+        "wow_pct": 0
+      },
+      {
+        "platform": "wlw",
+        "source": "alibaba",
+        "current": 1,
+        "prev": 1,
+        "wow_pct": 0
+      }
+    ]
+  },
+  "anomalies": [
+    {
+      "level": "P0",
+      "signal": "ep App UV 暴跌 -71.4%（2938 → 840，Δ-2098）",
+      "action": "排查 App 推送策略与版本更新"
+    },
+    {
+      "level": "P0",
+      "signal": "wlw App UV 暴跌 -83.1%（852 → 144，Δ-708）",
+      "action": "排查 App 推送策略与版本更新"
+    },
+    {
+      "level": "P1",
+      "signal": "ep RFQ AB 大幅下降 -24.4%（180 → 136，Δ-44）",
+      "action": "排查 RFQ 分发率与来源"
+    },
+    {
+      "level": "P1",
+      "signal": "wlw Web UV 大幅下降 -26.6%（19049 → 13981，Δ-5068）",
+      "action": "排查渠道变化，关注 Organic / Paid 分布"
+    },
+    {
+      "level": "P1",
+      "signal": "wlw AB 大幅下降 -37.8%（156 → 97，Δ-59）",
+      "action": "下钻 QDR / RFQ 来源拆分定位"
+    },
+    {
+      "level": "P1",
+      "signal": "wlw QDR AB 大幅下降 -44.3%（88 → 49，Δ-39）",
+      "action": "排查 request_origin 维度（web / app / alibaba）"
+    },
+    {
+      "level": "P1",
+      "signal": "wlw RFQ AB 大幅下降 -30%（70 → 49，Δ-21）",
+      "action": "排查 RFQ 分发率与来源"
+    },
+    {
+      "level": "P2",
+      "signal": "ep Web UV 下降 -14.8%（18044 → 15375，Δ-2669）",
+      "action": "排查渠道变化，关注 Organic / Paid 分布"
+    },
+    {
+      "level": "OK",
+      "signal": "wlw AB2 上涨 +20%（5 → 6，Δ+1）",
+      "action": "持续观察"
+    }
+  ]
+}

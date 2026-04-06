@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UG Daily Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f7fa; color: #1a1a2e; padding: 24px; }
+  .container { max-width: 1400px; margin: 0 auto; }
+
+  .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+  .header-row h1 { font-size: 24px; }
+  .subtitle { color: #666; font-size: 14px; margin-top: 4px; }
+
+  #datePicker {
+    padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 8px;
+    font-size: 14px; background: #fff; cursor: pointer; min-width: 160px;
+  }
+  #datePicker:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+
+  .card { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .card h2 { font-size: 18px; margin-bottom: 16px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+  .card h3 { font-size: 15px; margin: 16px 0 8px; color: #475569; }
+
+  /* D-AB2 Progress Bar */
+  .dab2-card { border-left: 4px solid #3b82f6; }
+  .dab2-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .dab2-title { font-size: 16px; font-weight: 700; }
+  .dab2-value { font-size: 28px; font-weight: 700; }
+  .dab2-value .target { font-size: 16px; font-weight: 400; color: #94a3b8; }
+  .progress-track { height: 16px; background: #e2e8f0; border-radius: 8px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 8px; transition: width 0.6s ease; }
+  .progress-fill.low { background: linear-gradient(90deg, #ef4444, #f97316); }
+  .progress-fill.mid { background: linear-gradient(90deg, #f59e0b, #eab308); }
+  .progress-fill.high { background: linear-gradient(90deg, #22c55e, #16a34a); }
+  .dab2-detail { margin-top: 10px; font-size: 13px; color: #64748b; display: flex; gap: 24px; }
+  .dab2-detail span { display: inline-flex; align-items: center; gap: 4px; }
+
+  /* Summary Cards */
+  .summary-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+  .summary-item { text-align: center; padding: 16px; background: #f8f9fa; border-radius: 8px; }
+  .summary-item .label { font-size: 12px; color: #666; margin-bottom: 4px; }
+  .summary-item .value { font-size: 28px; font-weight: 700; }
+  .summary-item .change { font-size: 13px; margin-top: 4px; font-weight: 600; }
+  .summary-item .sub-metric { margin-top: 8px; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 6px; }
+  .up { color: #16a34a; }
+  .down { color: #dc2626; }
+  .neutral { color: #6b7280; }
+
+  .split-row { display: flex; justify-content: center; gap: 24px; margin-top: 6px; }
+  .split-col { text-align: center; }
+  .split-col .split-label { font-size: 11px; color: #666; }
+  .split-col .split-value { font-size: 22px; font-weight: 700; }
+  .split-col .change { font-size: 12px; }
+
+  /* Charts */
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .chart-container { position: relative; height: 260px; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #eee; }
+  th { background: #f8f9fa; font-weight: 600; font-size: 12px; color: #475569; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr.subtotal { font-weight: 700; background: #f8f9fa; }
+  tr.highlight-down { background: #fef2f2; }
+  tr.highlight-up { background: #f0fdf4; }
+
+  /* Anomaly */
+  .alert-card { border-left: 4px solid #dc2626; }
+  .alert-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .alert-table th { background: #f8f9fa; padding: 10px 12px; text-align: left; font-size: 12px; }
+  .alert-table td { padding: 10px 12px; border-bottom: 1px solid #eee; vertical-align: top; }
+  .alert-table .signal { max-width: 400px; }
+  .alert-table .action { max-width: 350px; color: #475569; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-right: 4px; }
+  .badge-P0 { background: #fee2e2; color: #991b1b; }
+  .badge-P1 { background: #fee2e2; color: #991b1b; }
+  .badge-P2 { background: #fef3c7; color: #92400e; }
+  .badge-OK { background: #dcfce7; color: #166534; }
+
+  .funnel-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .platform-label { font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 8px; padding: 4px 8px; background: #e2e8f0; border-radius: 6px; display: inline-block; }
+
+  .footer { margin-top: 16px; padding: 16px 24px; color: #94a3b8; font-size: 11px; line-height: 1.8; text-align: center; }
+  .footer span { margin: 0 8px; }
+
+  /* Loading / Empty */
+  #loading { text-align: center; padding: 80px 0; color: #94a3b8; font-size: 16px; }
+  #loading .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid #e2e8f0; border-top-color: #3b82f6; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #empty-state { text-align: center; padding: 80px 0; color: #94a3b8; }
+  #empty-state h2 { font-size: 20px; margin-bottom: 8px; color: #64748b; }
+
+  @media (max-width: 900px) {
+    .summary-grid { grid-template-columns: repeat(3, 1fr); }
+    .chart-row, .funnel-row { grid-template-columns: 1fr; }
+    .header-row { flex-direction: column; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header-row">
+    <div>
+      <h1>UG Daily Dashboard</h1>
+      <p class="subtitle" id="subtitle">加载中…</p>
+    </div>
+    <select id="datePicker" disabled><option>加载中…</option></select>
+  </div>
+
+  <div id="loading"><span class="spinner"></span>正在加载数据…</div>
+  <div id="empty-state" style="display:none"><h2>暂无数据</h2><p>请先运行 <code>node scripts/generate.js</code> 生成数据。</p></div>
+
+  <div id="main-content" style="display:none">
+
+    <!-- D-AB2 Progress -->
+    <div class="card dab2-card" id="dab2-section"></div>
+
+    <!-- Core Verdict + Summary -->
+    <div class="card">
+      <h2>核心判断</h2>
+      <p id="core-verdict" style="color:#475569; margin-bottom:16px; font-size:14px;"></p>
+      <div class="summary-grid" id="summary-grid"></div>
+    </div>
+
+    <!-- UV Trends -->
+    <div class="card">
+      <h2>UV 层趋势（14 天）</h2>
+      <div class="chart-row">
+        <div><h3>Web UV（ep + wlw）</h3><div class="chart-container"><canvas id="uvChart"></canvas></div></div>
+        <div><h3>App UV（ep + wlw）</h3><div class="chart-container"><canvas id="appChart"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- AB Trends -->
+    <div class="card">
+      <h2>AB 层趋势（14 天）</h2>
+      <div class="chart-row">
+        <div><h3>QDR AB（ep + wlw）</h3><div class="chart-container"><canvas id="qdrChart"></canvas></div></div>
+        <div><h3>RFQ AB（ep + wlw）</h3><div class="chart-container"><canvas id="rfqChart"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- AB2 Trends -->
+    <div class="card">
+      <h2>AB2 层趋势（14 天）</h2>
+      <div style="max-width:680px;"><h3>AB2（ep + wlw）</h3><div class="chart-container"><canvas id="ab2Chart"></canvas></div></div>
+    </div>
+
+    <!-- UV Drilldown -->
+    <div class="card">
+      <h2>UV 下钻（漏斗第一层）</h2>
+      <div class="funnel-row">
+        <div><span class="platform-label">ep</span><div id="ep-uv-table"></div></div>
+        <div><span class="platform-label">wlw</span><div id="wlw-uv-table"></div></div>
+      </div>
+    </div>
+
+    <!-- AB Drilldown -->
+    <div class="card">
+      <h2>AB 下钻（漏斗第二层）</h2>
+      <p style="color:#475569; margin-bottom:12px; font-size:13px;">口径：active_buyers 去重人头（buyer_id），按 request_type 拆分。同一 buyer 可能同时有 QDR + RFQ，故 QDR AB + RFQ AB &gt; AB 合计。</p>
+      <h3 id="qdr-ab-header"></h3>
+      <div id="qdr-ab-table"></div>
+      <h3 id="rfq-ab-header" style="margin-top:24px;"></h3>
+      <div id="rfq-ab-table"></div>
+    </div>
+
+    <!-- AB2 Drilldown -->
+    <div class="card">
+      <h2>AB2 下钻（漏斗第三层）</h2>
+      <p id="ab2-drill-summary" style="color:#475569; margin-bottom:12px; font-size:14px;"></p>
+      <div id="ab2-table"></div>
+    </div>
+
+    <!-- Anomaly & Action -->
+    <div class="card alert-card">
+      <h2>异动 &amp; 行动</h2>
+      <p style="color:#666; margin-bottom:16px; font-size:13px;">汇总全部层级的关键信号，从高到低排列。扫完此表 = 读完全文。</p>
+      <table class="alert-table">
+        <thead><tr><th style="width:80px;">级别</th><th class="signal">信号</th><th class="action">下一步</th></tr></thead>
+        <tbody id="anomaly-body"></tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      <div>数据来源：Redash → Redshift（ga_user_metrics · active_buyers · app_user_lt_retention）</div>
+      <div>口径：Web UV = COUNT(DISTINCT visitor_sk)<span>|</span>App UV = total_dau<span>|</span>AB = active_buyers<span>|</span>AB2 = is_ab2 = true<span>|</span>WoW = 对比上周同日</div>
+      <div>生成工具：UG Daily Dashboard · Cursor Agent</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===================================================================
+   State
+   =================================================================== */
+let activeCharts = [];
+
+/* ===================================================================
+   Helpers
+   =================================================================== */
+const $ = (sel) => document.querySelector(sel);
+const fmtNum = (n) => (n == null ? "—" : Number(n).toLocaleString());
+function wowPct(curr, prev) {
+  if (prev == null || prev < 5) return "—";
+  const p = ((curr - prev) / prev * 100).toFixed(1);
+  return Number(p) > 0 ? `+${p}%` : `${p}%`;
+}
+function wowDir(curr, prev) {
+  if (prev == null || prev < 5) return "neutral";
+  return curr > prev ? "up" : curr < prev ? "down" : "neutral";
+}
+function ppChange(curr, prev) {
+  if (curr == null || prev == null) return "—";
+  const diff = (curr - prev).toFixed(1);
+  return Number(diff) > 0 ? `+${diff}pp` : `${diff}pp`;
+}
+
+/* ===================================================================
+   Date Picker
+   =================================================================== */
+async function init() {
+  try {
+    const resp = await fetch("data/manifest.json");
+    if (!resp.ok) throw new Error("manifest not found");
+    const manifest = await resp.json();
+    if (!manifest.length) { showEmpty(); return; }
+
+    const picker = $("#datePicker");
+    picker.innerHTML = manifest.map(d => `<option value="${d}">${d}</option>`).join("");
+    picker.disabled = false;
+    picker.addEventListener("change", () => loadDate(picker.value));
+
+    await loadDate(manifest[0]);
+  } catch {
+    showEmpty();
+  }
+}
+
+function showEmpty() {
+  $("#loading").style.display = "none";
+  $("#empty-state").style.display = "block";
+}
+
+async function loadDate(date) {
+  $("#loading").style.display = "block";
+  $("#main-content").style.display = "none";
+  try {
+    const resp = await fetch(`data/${date}.json`);
+    if (!resp.ok) throw new Error("data not found");
+    const data = await resp.json();
+    render(data);
+    $("#loading").style.display = "none";
+    $("#main-content").style.display = "block";
+  } catch (e) {
+    $("#loading").innerHTML = `<span style="color:#dc2626;">加载失败：${e.message}</span>`;
+  }
+}
+
+/* ===================================================================
+   Render: Header
+   =================================================================== */
+function render(data) {
+  const m = data.meta;
+  const dayNames = ["周日","周一","周二","周三","周四","周五","周六"];
+  const td = new Date(m.date + "T00:00:00");
+  const wd = new Date(m.wow_date + "T00:00:00");
+  const dayName = dayNames[td.getDay()];
+  const wdName = dayNames[wd.getDay()];
+
+  $("#subtitle").textContent =
+    `${m.date}（${dayName}）| 对比基准：${m.wow_date}（上${wdName}）| 数据延迟 ~${m.latency_days} 天 | 生成：${m.generated_at.slice(0, 16).replace("T", " ")}`;
+
+  renderDAB2(data.summary);
+  renderSummary(data.summary);
+  renderVerdict(data.summary);
+  renderCharts(data.trends);
+  renderUVDrill(data.drilldown);
+  renderABDrill(data.summary, data.drilldown);
+  renderAB2Drill(data.summary, data.drilldown);
+  renderAnomalies(data.anomalies);
+}
+
+/* ===================================================================
+   Render: D-AB2 Progress
+   =================================================================== */
+function renderDAB2(summary) {
+  const d = summary.d_ab2;
+  const pctDone = Math.min(100, Math.round((d.total / d.target) * 100));
+  const barClass = pctDone < 30 ? "low" : pctDone < 70 ? "mid" : "high";
+
+  const prevTotal = (summary.ep.ab2_prev || 0) + (summary.wlw.ab2_prev || 0);
+  const totalWow = wowPct(d.total, prevTotal);
+  const totalDir = wowDir(d.total, prevTotal);
+
+  $("#dab2-section").innerHTML = `
+    <div class="dab2-header">
+      <div class="dab2-title">D-AB2 目标追踪</div>
+      <div class="dab2-value">${fmtNum(d.total)} <span class="target">/ ${fmtNum(d.target)}</span>
+        <span class="change ${totalDir}" style="font-size:14px; margin-left:8px;">${totalWow}</span>
+      </div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill ${barClass}" style="width:${pctDone}%"></div>
+    </div>
+    <div class="dab2-detail">
+      <span>ep: <strong>${fmtNum(d.ep)}</strong></span>
+      <span>wlw: <strong>${fmtNum(d.wlw)}</strong></span>
+      <span>完成度: <strong>${pctDone}%</strong></span>
+      <span>缺口: <strong>${d.gap_pct > 0 ? d.gap_pct + "%" : "已达标"}</strong></span>
+    </div>`;
+}
+
+/* ===================================================================
+   Render: Core Verdict (auto-generated)
+   =================================================================== */
+function renderVerdict(summary) {
+  const tot = {};
+  for (const k of ["web_uv","app_uv","ab","ab2"]) {
+    tot[k] = (summary.ep[k] || 0) + (summary.wlw[k] || 0);
+    tot[k + "_prev"] = (summary.ep[k + "_prev"] || 0) + (summary.wlw[k + "_prev"] || 0);
+  }
+  function desc(name, curr, prev) {
+    if (prev < 5) return `${name} 数据不足`;
+    const p = ((curr - prev) / prev * 100).toFixed(1);
+    if (p > 5) return `${name} 涨 +${p}%`;
+    if (p < -5) return `${name} 降 ${p}%`;
+    return `${name} 持平`;
+  }
+  const parts = [
+    desc("Web UV", tot.web_uv, tot.web_uv_prev),
+    desc("AB", tot.ab, tot.ab_prev),
+    desc("AB2", tot.ab2, tot.ab2_prev),
+  ];
+  $("#core-verdict").textContent = parts.join(" → ");
+}
+
+/* ===================================================================
+   Render: Summary Cards
+   =================================================================== */
+function renderSummary(summary) {
+  const ep = summary.ep, wlw = summary.wlw;
+  function total(k) { return (ep[k] || 0) + (wlw[k] || 0); }
+  function totalPrev(k) { return (ep[k + "_prev"] || 0) + (wlw[k + "_prev"] || 0); }
+
+  const ab2Rate = summary.ab_to_ab2_pct;
+  const totalAb2RateCurr = total("ab") > 0 ? (total("ab2") / total("ab") * 100).toFixed(1) : "—";
+  const totalAb2RatePrev = totalPrev("ab") > 0 ? (totalPrev("ab2") / totalPrev("ab") * 100).toFixed(1) : "—";
+
+  function card(label, curr, prev) {
+    return `<div class="summary-item">
+      <div class="label">${label}</div>
+      <div class="value">${fmtNum(curr)}</div>
+      <div class="change ${wowDir(curr, prev)}">WoW ${wowPct(curr, prev)}</div>
+    </div>`;
+  }
+
+  const qdrCurr = total("qdr_ab"), qdrPrev = totalPrev("qdr_ab");
+  const rfqCurr = total("rfq_ab"), rfqPrev = totalPrev("rfq_ab");
+
+  const abSplitCard = `<div class="summary-item">
+    <div class="label">AB 拆分（人头）</div>
+    <div class="split-row">
+      <div class="split-col">
+        <div class="split-label">QDR</div>
+        <div class="split-value">${fmtNum(qdrCurr)}</div>
+        <div class="change ${wowDir(qdrCurr, qdrPrev)}" style="font-size:12px;">${wowPct(qdrCurr, qdrPrev)}</div>
+      </div>
+      <div class="split-col">
+        <div class="split-label">RFQ</div>
+        <div class="split-value">${fmtNum(rfqCurr)}</div>
+        <div class="change ${wowDir(rfqCurr, rfqPrev)}" style="font-size:12px;">${wowPct(rfqCurr, rfqPrev)}</div>
+      </div>
+    </div>
+  </div>`;
+
+  const ab2Curr = total("ab2"), ab2Prev = totalPrev("ab2");
+  const ab2Card = `<div class="summary-item">
+    <div class="label">AB2（全口径）</div>
+    <div class="value" style="color:${ab2Curr >= ab2Prev ? "#16a34a" : "#dc2626"};">${fmtNum(ab2Curr)}</div>
+    <div class="change ${wowDir(ab2Curr, ab2Prev)}">WoW ${wowPct(ab2Curr, ab2Prev)}</div>
+    <div class="sub-metric">AB→AB2%: ${totalAb2RateCurr}%
+      <span class="${Number(totalAb2RateCurr) >= Number(totalAb2RatePrev) ? "up" : "down"}">(${ppChange(Number(totalAb2RateCurr), Number(totalAb2RatePrev))})</span>
+    </div>
+  </div>`;
+
+  $("#summary-grid").innerHTML = [
+    card("Web UV", total("web_uv"), totalPrev("web_uv")),
+    card("App UV", total("app_uv"), totalPrev("app_uv")),
+    card("AB（全口径）", total("ab"), totalPrev("ab")),
+    abSplitCard,
+    ab2Card,
+  ].join("");
+}
+
+/* ===================================================================
+   Render: Charts
+   =================================================================== */
+const EP_COLOR = "#3b82f6";
+const WLW_COLOR = "#f59e0b";
+const TOTAL_COLOR = "#1e293b";
+const CHART_OPTS = {
+  responsive: true, maintainAspectRatio: false,
+  interaction: { mode: "index", intersect: false },
+  plugins: { legend: { position: "top", labels: { font: { size: 11 } } } },
+  scales: {
+    x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+    y: { beginAtZero: false, ticks: { font: { size: 10 } } },
+  },
+};
+
+function makeDatasets(epArr, wlwArr) {
+  const total = epArr.map((v, i) => v + wlwArr[i]);
+  return [
+    { label: "全站", data: total, borderColor: TOTAL_COLOR, borderWidth: 2.5, tension: 0.3, pointRadius: 3 },
+    { label: "ep", data: epArr, borderColor: EP_COLOR, borderDash: [4,4], borderWidth: 1.5, tension: 0.3, pointRadius: 2 },
+    { label: "wlw", data: wlwArr, borderColor: WLW_COLOR, borderDash: [4,4], borderWidth: 1.5, tension: 0.3, pointRadius: 2 },
+  ];
+}
+
+function renderCharts(trends) {
+  activeCharts.forEach((c) => c.destroy());
+  activeCharts = [];
+
+  const ids = ["uvChart","appChart","qdrChart","rfqChart","ab2Chart"];
+  ids.forEach((id) => {
+    const canvas = document.getElementById(id);
+    const parent = canvas.parentNode;
+    const w = canvas.width, h = canvas.height;
+    canvas.remove();
+    const newCanvas = document.createElement("canvas");
+    newCanvas.id = id;
+    parent.appendChild(newCanvas);
+  });
+
+  function mk(id, ep, wlw) {
+    const c = new Chart(document.getElementById(id), {
+      type: "line",
+      data: { labels: trends.labels, datasets: makeDatasets(ep, wlw) },
+      options: CHART_OPTS,
+    });
+    activeCharts.push(c);
+  }
+
+  mk("uvChart", trends.ep_uv, trends.wlw_uv);
+  mk("appChart", trends.ep_app, trends.wlw_app);
+  mk("qdrChart", trends.ep_qdr, trends.wlw_qdr);
+  mk("rfqChart", trends.ep_rfq, trends.wlw_rfq);
+  mk("ab2Chart", trends.ep_ab2, trends.wlw_ab2);
+}
+
+/* ===================================================================
+   Render: UV Drilldown Tables
+   =================================================================== */
+function buildChannelTable(rows) {
+  if (!rows || !rows.length) return "<p style='color:#94a3b8;'>无数据</p>";
+  let totalCurr = 0, totalPrev = 0;
+  rows.forEach((r) => { totalCurr += r.current; totalPrev += r.prev; });
+
+  let html = `<table><thead><tr><th>渠道</th><th class="num">本期</th><th class="num">上期</th><th class="num">WoW</th></tr></thead><tbody>`;
+  for (const r of rows) {
+    const dir = wowDir(r.current, r.prev);
+    const cls = r.wow_pct != null && r.wow_pct <= -20 ? ' class="highlight-down"' : r.wow_pct != null && r.wow_pct >= 20 ? ' class="highlight-up"' : "";
+    html += `<tr${cls}><td>${r.channel}</td><td class="num">${fmtNum(r.current)}</td><td class="num">${fmtNum(r.prev)}</td><td class="num ${dir}">${wowPct(r.current, r.prev)}</td></tr>`;
+  }
+  html += `<tr class="subtotal"><td>合计</td><td class="num">${fmtNum(totalCurr)}</td><td class="num">${fmtNum(totalPrev)}</td><td class="num ${wowDir(totalCurr, totalPrev)}">${wowPct(totalCurr, totalPrev)}</td></tr>`;
+  html += `</tbody></table>`;
+  return html;
+}
+
+function renderUVDrill(drilldown) {
+  $("#ep-uv-table").innerHTML = buildChannelTable(drilldown.ep_uv_by_channel);
+  $("#wlw-uv-table").innerHTML = buildChannelTable(drilldown.wlw_uv_by_channel);
+}
+
+/* ===================================================================
+   Render: AB Drilldown Tables
+   =================================================================== */
+function buildSourceTable(rows, showAb2) {
+  if (!rows || !rows.length) return "<p style='color:#94a3b8;'>无数据</p>";
+  const ab2Header = showAb2 ? "<th class='num'>AB2 本期</th><th class='num'>AB2 上期</th>" : "";
+
+  let html = `<table><thead><tr><th>Platform</th><th>Source</th><th class="num">本期</th><th class="num">上期</th><th class="num">WoW</th>${ab2Header}</tr></thead><tbody>`;
+  for (const r of rows) {
+    const dir = wowDir(r.current, r.prev);
+    const cls = r.wow_pct != null && r.wow_pct <= -20 ? ' class="highlight-down"' : r.wow_pct != null && r.wow_pct >= 20 ? ' class="highlight-up"' : "";
+    const ab2Cells = showAb2 ? `<td class="num">${fmtNum(r.ab2_current)}</td><td class="num">${fmtNum(r.ab2_prev)}</td>` : "";
+    html += `<tr${cls}><td>${r.platform}</td><td>${r.source}</td><td class="num">${fmtNum(r.current)}</td><td class="num">${fmtNum(r.prev)}</td><td class="num ${dir}">${wowPct(r.current, r.prev)}</td>${ab2Cells}</tr>`;
+  }
+  html += `</tbody></table>`;
+  return html;
+}
+
+function renderABDrill(summary, drilldown) {
+  const ep = summary.ep, wlw = summary.wlw;
+  const qdrTotal = (ep.qdr_ab || 0) + (wlw.qdr_ab || 0);
+  const qdrPrev = (ep.qdr_ab_prev || 0) + (wlw.qdr_ab_prev || 0);
+  const rfqTotal = (ep.rfq_ab || 0) + (wlw.rfq_ab || 0);
+  const rfqPrev = (ep.rfq_ab_prev || 0) + (wlw.rfq_ab_prev || 0);
+
+  $("#qdr-ab-header").innerHTML = `QDR AB：${fmtNum(qdrTotal)}（WoW <span class="${wowDir(qdrTotal, qdrPrev)}">${wowPct(qdrTotal, qdrPrev)}</span>）`;
+  $("#qdr-ab-table").innerHTML = buildSourceTable(drilldown.qdr_ab_by_source, true);
+
+  $("#rfq-ab-header").innerHTML = `RFQ AB：${fmtNum(rfqTotal)}（WoW <span class="${wowDir(rfqTotal, rfqPrev)}">${wowPct(rfqTotal, rfqPrev)}</span>）`;
+  $("#rfq-ab-table").innerHTML = buildSourceTable(drilldown.rfq_ab_by_source, true);
+}
+
+/* ===================================================================
+   Render: AB2 Drilldown
+   =================================================================== */
+function renderAB2Drill(summary, drilldown) {
+  const ab2Total = summary.d_ab2.total;
+  const ab2Prev = (summary.ep.ab2_prev || 0) + (summary.wlw.ab2_prev || 0);
+  const wow = wowPct(ab2Total, ab2Prev);
+  const dir = wowDir(ab2Total, ab2Prev);
+
+  $("#ab2-drill-summary").innerHTML = `AB2 合计：<strong>${fmtNum(ab2Total)}</strong>（WoW <span class="${dir}">${wow}</span>），D-AB2 距 500 目标缺口 ${summary.d_ab2.gap_pct > 0 ? summary.d_ab2.gap_pct + "%" : "已达标"}。`;
+
+  if (!drilldown.ab2_by_source || !drilldown.ab2_by_source.length) {
+    $("#ab2-table").innerHTML = "<p style='color:#94a3b8;'>无数据</p>";
+    return;
+  }
+  let html = `<table><thead><tr><th>Platform</th><th>Source</th><th class="num">本期</th><th class="num">上期</th><th class="num">WoW</th></tr></thead><tbody>`;
+  for (const r of drilldown.ab2_by_source) {
+    const d = wowDir(r.current, r.prev);
+    const cls = r.wow_pct != null && r.wow_pct <= -20 ? ' class="highlight-down"' : r.wow_pct != null && r.wow_pct >= 20 ? ' class="highlight-up"' : "";
+    html += `<tr${cls}><td>${r.platform}</td><td>${r.source}</td><td class="num">${fmtNum(r.current)}</td><td class="num">${fmtNum(r.prev)}</td><td class="num ${d}">${wowPct(r.current, r.prev)}</td></tr>`;
+  }
+  html += `</tbody></table>`;
+  $("#ab2-table").innerHTML = html;
+}
+
+/* ===================================================================
+   Render: Anomaly Table
+   =================================================================== */
+function renderAnomalies(anomalies) {
+  const body = $("#anomaly-body");
+  if (!anomalies || !anomalies.length) {
+    body.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8; padding:24px;">所有指标在正常范围内 ✅</td></tr>`;
+    return;
+  }
+  const icons = { P0: "❌", P1: "❌", P2: "⚠️", OK: "✅" };
+  body.innerHTML = anomalies.map((a) =>
+    `<tr><td><span class="badge badge-${a.level}">${icons[a.level] || ""} ${a.level}</span></td><td class="signal">${a.signal}</td><td class="action">${a.action}</td></tr>`
+  ).join("");
+}
+
+/* ===================================================================
+   Init
+   =================================================================== */
+init();
+</script>
+</body>
+</html>
