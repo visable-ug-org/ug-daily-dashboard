@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UG 日报 2026-04-04</title>
+<title>UG 日报</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -14,6 +14,11 @@
   .card { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
   .card h2 { font-size: 18px; margin-bottom: 16px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
   .card h3 { font-size: 15px; margin: 16px 0 8px; color: #475569; }
+
+  .date-picker { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .date-btn { padding: 8px 18px; border-radius: 8px; border: 2px solid #e2e8f0; background: #fff; cursor: pointer; font-size: 14px; font-weight: 600; color: #475569; transition: all 0.15s; }
+  .date-btn:hover { border-color: #3b82f6; color: #3b82f6; }
+  .date-btn.active { background: #3b82f6; border-color: #3b82f6; color: #fff; }
 
   .dab2-card { border-left: 4px solid #3b82f6; }
   .dab2-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
@@ -99,62 +104,22 @@
   .badge-p2 { background: #fef3c7; color: #92400e; }
   .badge-ok { background: #dcfce7; color: #166534; }
 
-  .funnel-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  .platform-label { font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 8px; padding: 4px 8px; background: #e2e8f0; border-radius: 6px; display: inline-block; }
-
   .footer { margin-top: 16px; padding: 16px 24px; color: #94a3b8; font-size: 11px; line-height: 1.8; text-align: center; }
   .footer span { margin: 0 8px; }
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>UG 日报 | 2026-04-04（周六）</h1>
-  <p class="subtitle">对比基准：2026-03-28（上周六） | 数据延迟 ~2 天 | 生成时间：2026-04-06</p>
+  <div class="date-picker" id="datePicker"></div>
+  <h1 id="pageTitle"></h1>
+  <p class="subtitle" id="pageSubtitle"></p>
 
-  <!-- D-AB2 目标进度 -->
   <div class="card dab2-card" id="dab2-section"></div>
 
-  <!-- 核心判断：卡片速览 -->
   <div class="card">
     <h2>核心判断</h2>
-    <p style="color:#475569; margin-bottom:16px; font-size:14px;">UV 降 → AB 降 → 但 AB2 逆势增长。AB→AB2% 从 13.8% 提升至 21.5%。</p>
-    <div class="summary-grid">
-      <div class="summary-item">
-        <div class="label">Web UV</div>
-        <div class="value">29,307</div>
-        <div class="change down">WoW -17.0%</div>
-      </div>
-      <div class="summary-item">
-        <div class="label">App UV</div>
-        <div class="value">983</div>
-        <div class="change down">WoW -74.0%</div>
-      </div>
-      <div class="summary-item">
-        <div class="label">AB（全口径）</div>
-        <div class="value">461</div>
-        <div class="change down">WoW -6.7%</div>
-      </div>
-      <div class="summary-item">
-        <div class="label">AB 拆分（人头）</div>
-        <div style="display:flex; justify-content:center; gap:24px; margin-top:6px;">
-          <div style="text-align:center;">
-            <div style="font-size:11px; color:#666;">QDR</div>
-            <div style="font-size:22px; font-weight:700;">279</div>
-            <div class="change down" style="font-size:12px;">-5.4%</div>
-          </div>
-          <div style="text-align:center;">
-            <div style="font-size:11px; color:#666;">RFQ</div>
-            <div style="font-size:22px; font-weight:700;">206</div>
-            <div class="change down" style="font-size:12px;">-3.3%</div>
-          </div>
-        </div>
-      </div>
-      <div class="summary-item">
-        <div class="label">AB2（全口径）</div>
-        <div class="value" style="color:#16a34a;">99</div>
-        <div class="change up">WoW +45.6%</div>
-      </div>
-    </div>
+    <p id="coreVerdict" style="color:#475569; margin-bottom:16px; font-size:14px;"></p>
+    <div class="summary-grid" id="summaryGrid"></div>
   </div>
 
   <div class="card note-card">
@@ -163,7 +128,6 @@
     <div class="note-text" style="margin-top:6px;">App / Alibaba 目前仅展示总量。进一步下钻正在和数据团队沟通中。关联人：数据团队</div>
   </div>
 
-  <!-- UV 层趋势 -->
   <div class="card">
     <h2>UV 层趋势（14 天）</h2>
     <p style="color:#64748b; margin-bottom:10px; font-size:12px;">实线 = 当前 14 天，虚线 = 上周同日（t-7），浅色带表示两者差距。</p>
@@ -181,7 +145,6 @@
     </div>
   </div>
 
-  <!-- AB 层趋势 -->
   <div class="card">
     <h2>AB 层趋势（14 天）</h2>
     <p style="color:#64748b; margin-bottom:10px; font-size:12px;">实线 = 当前 14 天，虚线 = 上周同日（t-7），浅色带表示两者差距。</p>
@@ -199,7 +162,6 @@
     </div>
   </div>
 
-  <!-- AB2 层趋势 -->
   <div class="card">
     <h2>AB2 层趋势（14 天）</h2>
     <p style="color:#64748b; margin-bottom:10px; font-size:12px;">实线 = 当前 14 天，虚线 = 上周同日（t-7），浅色带表示两者差距。</p>
@@ -210,80 +172,30 @@
     </div>
   </div>
 
-  <!-- UV 下钻 -->
   <div class="card">
     <h2>UV 下钻（漏斗第一层）</h2>
-    <p class="section-note">Web 按 `PC / WAP / Others -> Channel` 展开；App 只看总量，Others 已合并低频渠道和未识别项。</p>
+    <p class="section-note">Web 按 <code>PC / WAP / Others -> Channel</code> 展开；App 只看总量，Others 已合并低频渠道和未识别项。</p>
     <div id="uv-drill"></div>
   </div>
 
-  <!-- AB 下钻 -->
   <div class="card">
     <h2>AB 下钻（漏斗第二层）</h2>
-    <p class="section-note">Web 按 `PC / WAP / Others -> Channel` 展开；App / Alibaba 只看总量，Others 已合并低频渠道和未识别项。</p>
+    <p class="section-note">Web 按 <code>PC / WAP / Others -> Channel</code> 展开；App / Alibaba 只看总量，Others 已合并低频渠道和未识别项。</p>
     <div id="ab-drill"></div>
   </div>
 
-  <!-- AB2 下钻 -->
   <div class="card">
     <h2>AB2 下钻（漏斗第三层）</h2>
-    <p class="section-note">Web 按 `PC / WAP / Others -> Channel` 展开；App / Alibaba 只看总量，Others 已合并低频渠道和未识别项。</p>
+    <p class="section-note">Web 按 <code>PC / WAP / Others -> Channel</code> 展开；App / Alibaba 只看总量，Others 已合并低频渠道和未识别项。</p>
     <div id="ab2-drill"></div>
   </div>
 
-  <!-- 异动 & 行动 -->
   <div class="card" style="border-left: 4px solid #dc2626;">
     <h2>异动 & 行动</h2>
     <p style="color:#666; margin-bottom:16px; font-size:13px;">汇总全部层级的关键信号，从高到低排列。扫完此表 = 读完全文。</p>
     <table class="alert-table">
       <thead><tr><th style="width:80px;">级别</th><th class="signal">信号</th><th class="action">下一步</th></tr></thead>
-      <tbody>
-        <tr style="background:#fef2f2;">
-          <td><span class="badge badge-p0">❌ P0</span></td>
-          <td class="signal">App UV ep -71.2%, wlw -82.9%（工作日同比亦 -60%+，真实下降）</td>
-          <td class="action">排查 App UV 大幅下滑根因</td>
-        </tr>
-        <tr style="background:#fef2f2;">
-          <td><span class="badge badge-p1">❌ P1</span></td>
-          <td class="signal">wlw Paid Search UV -56.6%（-517，贡献跌幅 13%）</td>
-          <td class="action">排查 wlw Paid Search 掉量根因</td>
-        </tr>
-        <tr style="background:#fef2f2;">
-          <td><span class="badge badge-p1">❌ P1</span></td>
-          <td class="signal">wlw Organic Search UV -21.2%（-3,047，贡献跌幅 78%）</td>
-          <td class="action">先观察周一，若连续下降再下钻页面类型</td>
-        </tr>
-        <tr style="background:#fef2f2;">
-          <td><span class="badge badge-p1">❌ P1</span></td>
-          <td class="signal">wlw QDR AB -30.0%（app -57.1%, web -31.6%）</td>
-          <td class="action">排查 App UV；Web 下钻渠道×页面</td>
-        </tr>
-        <tr style="background:#fffbeb;">
-          <td><span class="badge badge-p2">⚠️ P2</span></td>
-          <td class="signal">wlw AB→AB2% = 6.0%（ep 为 26.7%），alibaba 回复率最低</td>
-          <td class="action">验证 wlw Alibaba 回复率与供给质量</td>
-        </tr>
-        <tr>
-          <td><span class="badge badge-ok">✅</span></td>
-          <td class="signal">ep Organic Search UV -12.8%，周六正常回落</td>
-          <td class="action">持续观察</td>
-        </tr>
-        <tr style="background:#f0fdf4;">
-          <td><span class="badge badge-ok">✅</span></td>
-          <td class="signal">ep QDR AB +5.4%（web +14.3%, alibaba +28.9% 对冲 app -12.6%）</td>
-          <td class="action">无需行动</td>
-        </tr>
-        <tr style="background:#f0fdf4;">
-          <td><span class="badge badge-ok">✅</span></td>
-          <td class="signal">ep RFQ AB +2.7%（web +31%, app +18%），alibaba -8.3% 小幅拖累</td>
-          <td class="action">持续观察</td>
-        </tr>
-        <tr style="background:#f0fdf4;">
-          <td><span class="badge badge-ok">✅</span></td>
-          <td class="signal">ep AB2 +50.8%（AB→AB2% 18.1%→26.7%）</td>
-          <td class="action">复用 Alibaba 改善经验到 wlw</td>
-        </tr>
-      </tbody>
+      <tbody id="anomalyBody"></tbody>
     </table>
   </div>
 
@@ -295,550 +207,344 @@
 </div>
 
 <script>
-const labels = ["03/22","03/23","03/24","03/25","03/26","03/27","03/28","03/29","03/30","03/31","04/01","04/02","04/03","04/04"];
+// ===================== DATA BY DATE =====================
+const DATA = {
+  "2026-04-04": {
+    title: "2026-04-04（周六）",
+    wowDate: "2026-03-28（上周六）",
+    latency: 2,
+    genDate: "2026-04-06",
+    verdict: "UV 降 → AB 降 → 但 AB2 逆势增长。AB→AB2% 从 13.8% 提升至 21.5%。",
+    summary: {
+      webUV: 29307, webUVPrev: 35294,
+      appUV: 983, appUVPrev: 3780,
+      ab: 461, abPrev: 494,
+      qdrAB: 279, qdrABPrev: 295,
+      rfqAB: 206, rfqABPrev: 213,
+      ab2: 99, ab2Prev: 68, ab2Color: "#16a34a"
+    },
+    trends: {
+      labels: ["03/22","03/23","03/24","03/25","03/26","03/27","03/28","03/29","03/30","03/31","04/01","04/02","04/03","04/04"],
+      epUV: [18073,31807,32149,32091,31606,28027,17956,18044,32261,31328,29651,28148,22906,15901],
+      wlwUV: [19055,31158,30389,31114,30201,25729,17338,19049,29522,27873,24577,23006,17507,13406],
+      epApp: [1082,1475,1685,1773,2523,2298,2877,2938,1495,1327,1052,1188,971,829],
+      wlwApp: [322,387,487,626,641,713,903,852,413,334,233,256,244,154],
+      epQDR: [198,435,367,369,386,298,205,205,364,400,331,312,277,216],
+      wlwQDR: [81,238,226,237,256,187,90,88,228,157,186,154,78,63],
+      epRFQ: [153,367,306,281,329,234,146,180,301,320,314,251,226,150],
+      wlwRFQ: [62,146,120,130,123,90,67,70,122,97,109,107,65,56],
+      epAB2: [60,256,183,183,208,145,61,69,212,210,194,180,143,92],
+      wlwAB2: [9,58,37,36,44,40,7,5,40,25,41,28,14,7],
+      epUVT7: [17935,31710,31395,30562,28742,26113,16940,18073,31807,32149,32091,31606,28027,17956],
+      wlwUVT7: [20462,33310,32784,31718,30219,26309,16554,19055,31158,30389,31114,30201,25729,17338],
+      epAppT7: [850,930,983,949,1312,1064,1002,1082,1475,1685,1773,2523,2298,2877],
+      wlwAppT7: [167,223,253,223,293,354,259,322,387,487,626,641,713,903],
+      epQDRT7: [273,415,353,344,306,248,200,198,435,367,369,386,298,205],
+      wlwQDRT7: [92,219,214,248,224,156,77,81,238,226,237,256,187,90],
+      epRFQT7: [186,281,295,296,297,223,123,153,367,306,281,329,234,146],
+      wlwRFQT7: [84,145,159,113,126,81,46,62,146,120,130,123,90,67],
+      epAB2T7: [73,203,187,179,163,134,55,60,256,183,183,208,145,61],
+      wlwAB2T7: [8,56,50,41,34,27,7,9,58,37,36,44,40,7]
+    },
+    drill: {
+      uvWebTotals: [
+        ['ep','PC',4646,5385],['ep','WAP',11252,12573],['ep','(unknown)',4,0],
+        ['wlw','PC',3423,4545],['wlw','WAP',9983,12794],['wlw','(unknown)',1,1]
+      ],
+      uvWebRows: [
+        ['ep','(unknown)','organic_search',3,0],['ep','(unknown)','direct',1,0],
+        ['ep','PC','organic_search',2868,3426],['ep','PC','direct',1219,1299],['ep','PC','referral',231,289],['ep','PC','geo',145,173],['ep','PC','email',119,130],['ep','PC','display_performance',92,99],['ep','PC','Others',9,14],
+        ['ep','WAP','organic_search',9514,10774],['ep','WAP','direct',1195,1245],['ep','WAP','geo',298,318],['ep','WAP','referral',136,113],['ep','WAP','email',78,76],['ep','WAP','display_performance',46,45],['ep','WAP','Others',29,39],
+        ['wlw','(unknown)','organic_search',1,1],
+        ['wlw','PC','organic_search',2596,3404],['wlw','PC','direct',422,504],['wlw','PC','paid_search',154,297],['wlw','PC','referral',134,205],['wlw','PC','email',57,66],['wlw','PC','geo',46,44],['wlw','PC','Others',27,39],
+        ['wlw','WAP','organic_search',8766,11007],['wlw','WAP','direct',788,979],['wlw','WAP','paid_search',249,628],['wlw','WAP','geo',110,123],['wlw','WAP','referral',44,50],['wlw','WAP','email',29,19],['wlw','WAP','Others',11,13]
+      ],
+      uvAppTotals: [['ep',836,2877],['wlw',155,903]],
+      abWebTotals: [
+        ['ep',false,'(unknown)',69,43],['ep',false,'PC',19,38],['ep',false,'WAP',17,18],
+        ['ep',true,'(unknown)',17,11],['ep',true,'PC',13,5],['ep',true,'WAP',9,7],
+        ['wlw',false,'(unknown)',24,14],['wlw',false,'PC',3,18],['wlw',false,'WAP',13,25],
+        ['wlw',true,'(unknown)',2,0],['wlw',true,'PC',0,2],['wlw',true,'WAP',0,1]
+      ],
+      abWebRows: [
+        ['ep','(unknown)',false,'(unknown)',69,43],
+        ['ep','PC',false,'direct',10,14],['ep','PC',false,'organic_search',6,13],['ep','PC',false,'referral',2,6],['ep','PC',false,'geo',1,3],['ep','PC',false,'email',1,1],['ep','PC',false,'Others',0,1],
+        ['ep','WAP',false,'organic_search',12,10],['ep','WAP',false,'referral',2,0],['ep','WAP',false,'geo',2,2],['ep','WAP',false,'direct',1,6],
+        ['ep','(unknown)',true,'(unknown)',17,11],
+        ['ep','PC',true,'organic_search',8,2],['ep','PC',true,'direct',4,0],['ep','PC',true,'geo',1,0],['ep','PC',true,'display_performance',0,1],['ep','PC',true,'email',0,2],
+        ['ep','WAP',true,'organic_search',7,5],['ep','WAP',true,'geo',2,0],['ep','WAP',true,'referral',0,1],['ep','WAP',true,'direct',0,1],
+        ['wlw','(unknown)',false,'(unknown)',24,14],
+        ['wlw','PC',false,'organic_search',2,10],['wlw','PC',false,'direct',1,4],['wlw','PC',false,'paid_search',0,3],['wlw','PC',false,'email',0,1],
+        ['wlw','WAP',false,'organic_search',6,19],['wlw','WAP',false,'geo',3,0],['wlw','WAP',false,'paid_search',3,5],['wlw','WAP',false,'direct',1,1],
+        ['wlw','(unknown)',true,'(unknown)',2,0],
+        ['wlw','PC',true,'paid_search',0,2],['wlw','WAP',true,'organic_search',0,1]
+      ],
+      abSourceTotals: [
+        ['ep','app',false,72,87],['ep','app',true,31,27],['ep','alibaba',false,119,125],['ep','alibaba',true,27,12],
+        ['wlw','app',false,6,12],['wlw','app',true,1,4],['wlw','alibaba',false,69,82],['wlw','alibaba',true,4,0]
+      ]
+    },
+    anomalies: [
+      {level:'P0', badge:'badge-p0', icon:'❌ P0', bg:'#fef2f2', signal:'App UV ep -71.2%, wlw -82.9%（工作日同比亦 -60%+，真实下降）', action:'排查 App UV 大幅下滑根因'},
+      {level:'P1', badge:'badge-p1', icon:'❌ P1', bg:'#fef2f2', signal:'wlw Paid Search UV -56.6%（-517，贡献跌幅 13%）', action:'排查 wlw Paid Search 掉量根因'},
+      {level:'P1', badge:'badge-p1', icon:'❌ P1', bg:'#fef2f2', signal:'wlw Organic Search UV -21.2%（-3,047，贡献跌幅 78%）', action:'先观察周一，若连续下降再下钻页面类型'},
+      {level:'P1', badge:'badge-p1', icon:'❌ P1', bg:'#fef2f2', signal:'wlw QDR AB -30.0%（app -57.1%, web -31.6%）', action:'排查 App UV；Web 下钻渠道×页面'},
+      {level:'P2', badge:'badge-p2', icon:'⚠️ P2', bg:'#fffbeb', signal:'wlw AB→AB2% = 6.0%（ep 为 26.7%），alibaba 回复率最低', action:'验证 wlw Alibaba 回复率与供给质量'},
+      {level:'OK', badge:'badge-ok', icon:'✅', bg:'', signal:'ep Organic Search UV -12.8%，周六正常回落', action:'持续观察'},
+      {level:'OK', badge:'badge-ok', icon:'✅', bg:'#f0fdf4', signal:'ep QDR AB +5.4%（web +14.3%, alibaba +28.9% 对冲 app -12.6%）', action:'无需行动'},
+      {level:'OK', badge:'badge-ok', icon:'✅', bg:'#f0fdf4', signal:'ep RFQ AB +2.7%（web +31%, app +18%），alibaba -8.3% 小幅拖累', action:'持续观察'},
+      {level:'OK', badge:'badge-ok', icon:'✅', bg:'#f0fdf4', signal:'ep AB2 +50.8%（AB→AB2% 18.1%→26.7%）', action:'复用 Alibaba 改善经验到 wlw'}
+    ]
+  },
+  "2026-04-05": {
+    title: "2026-04-05（周日）",
+    wowDate: "2026-03-29（上周日）",
+    latency: 2,
+    genDate: "2026-04-07",
+    verdict: "周日全线回落。wlw AB/AB2 同步下滑，ep AB2 仍有韧性（72 vs prev 69，+4.3%）。",
+    summary: {
+      webUV: 29356, webUVPrev: 37093,
+      appUV: 984, appUVPrev: 3790,
+      ab: 438, abPrev: 524,
+      qdrAB: 272, qdrABPrev: 293,
+      rfqAB: 185, rfqABPrev: 250,
+      ab2: 78, ab2Prev: 74, ab2Color: "#16a34a"
+    },
+    trends: {
+      labels: ["03/23","03/24","03/25","03/26","03/27","03/28","03/29","03/30","03/31","04/01","04/02","04/03","04/04","04/05"],
+      epUV: [31807,32149,32091,31606,28027,17956,18044,32261,31328,29651,28148,22906,15901,15375],
+      wlwUV: [31158,30389,31114,30201,25729,17338,19049,29522,27873,24577,23006,17507,13406,13981],
+      epApp: [1475,1685,1773,2523,2298,2877,2938,1495,1327,1052,1188,972,836,840],
+      wlwApp: [387,487,626,641,713,903,852,413,334,233,256,244,155,144],
+      epQDR: [435,367,369,386,298,205,205,364,400,331,312,277,216,223],
+      wlwQDR: [238,226,237,256,187,90,88,228,157,186,154,78,63,49],
+      epRFQ: [367,306,281,329,234,146,180,301,320,314,251,226,150,136],
+      wlwRFQ: [146,120,130,123,90,67,70,122,97,109,107,65,56,49],
+      epAB2: [256,183,183,208,145,61,69,212,210,194,180,143,92,72],
+      wlwAB2: [58,37,36,44,40,7,5,40,25,41,28,14,7,6],
+      // t-7: window 03/16 ~ 03/29
+      epUVT7: [31710,31395,30562,28742,26113,16940,18073,31807,32149,32091,31606,28027,17956,18044],
+      wlwUVT7: [33310,32784,31718,30219,26309,16554,19055,31158,30389,31114,30201,25729,17338,19049],
+      epAppT7: [930,983,949,1312,1064,1002,1082,1475,1685,1773,2523,2298,2877,2938],
+      wlwAppT7: [223,253,223,293,354,259,322,387,487,626,641,713,903,852],
+      epQDRT7: [415,353,344,306,248,200,198,435,367,369,386,298,205,205],
+      wlwQDRT7: [219,214,248,224,156,77,81,238,226,237,256,187,90,88],
+      epRFQT7: [281,295,296,297,223,123,153,367,306,281,329,234,146,180],
+      wlwRFQT7: [145,159,113,126,81,46,62,146,120,130,123,90,67,70],
+      epAB2T7: [203,187,179,163,134,55,60,256,183,183,208,145,61,69],
+      wlwAB2T7: [56,50,41,34,27,7,9,58,37,36,44,40,7,5]
+    },
+    drill: null,
+    anomalies: [
+      {level:'P0', badge:'badge-p0', icon:'❌ P0', bg:'#fef2f2', signal:'ep App UV 暴跌 -71.4%（2938 → 840，Δ-2098）', action:'排查 App 推送策略与版本更新'},
+      {level:'P0', badge:'badge-p0', icon:'❌ P0', bg:'#fef2f2', signal:'wlw App UV 暴跌 -83.1%（852 → 144，Δ-708）', action:'排查 App 推送策略与版本更新'},
+      {level:'P1', badge:'badge-p1', icon:'❌ P1', bg:'#fef2f2', signal:'ep RFQ AB 大幅下降 -24.4%（180 → 136，Δ-44）', action:'排查 RFQ 分发率与来源'},
+      {level:'P1', badge:'badge-p1', icon:'❌ P1', bg:'#fef2f2', signal:'wlw Web UV 大幅下降 -26.6%（19049 → 13981，Δ-5068）', action:'排查渠道变化，关注 Organic / Paid 分布'},
+      {level:'P1', badge:'badge-p1', icon:'❌ P1', bg:'#fef2f2', signal:'wlw AB 大幅下降 -37.8%（156 → 97，Δ-59）', action:'下钻 QDR / RFQ 来源拆分定位'},
+      {level:'P1', badge:'badge-p1', icon:'❌ P1', bg:'#fef2f2', signal:'wlw QDR AB 大幅下降 -44.3%（88 → 49，Δ-39）', action:'排查 request_origin 维度'},
+      {level:'P1', badge:'badge-p1', icon:'❌ P1', bg:'#fef2f2', signal:'wlw RFQ AB 大幅下降 -30%（70 → 49，Δ-21）', action:'排查 RFQ 分发率与来源'},
+      {level:'P2', badge:'badge-p2', icon:'⚠️ P2', bg:'#fffbeb', signal:'ep Web UV 下降 -14.8%（18044 → 15375，Δ-2669）', action:'排查渠道变化，关注 Organic / Paid 分布'},
+      {level:'OK', badge:'badge-ok', icon:'✅', bg:'#f0fdf4', signal:'ep AB2 韧性 +4.3%（69 → 72），AB→AB2% 21.1%', action:'持续观察'},
+      {level:'OK', badge:'badge-ok', icon:'✅', bg:'', signal:'wlw AB2 微涨 +20%（5 → 6，绝对值小）', action:'持续观察'}
+    ]
+  }
+};
 
-const epUV = [18073,31807,32149,32091,31606,28027,17956,18044,32261,31328,29651,28148,22906,15901];
-const wlwUV = [19055,31158,30389,31114,30201,25729,17338,19049,29522,27873,24577,23006,17507,13406];
-const totalUV = epUV.map((v,i) => v + wlwUV[i]);
+const DATE_LIST = Object.keys(DATA).sort();
+let currentDate = DATE_LIST[DATE_LIST.length - 1];
+const chartInstances = {};
 
-const epAB2 = [60,256,183,183,208,145,61,69,212,210,194,180,143,92];
-const wlwAB2 = [9,58,37,36,44,40,7,5,40,25,41,28,14,7];
-const totalAB2 = epAB2.map((v,i) => v + wlwAB2[i]);
-
-const epQDR = [198,435,367,369,386,298,205,205,364,400,331,312,277,216];
-const wlwQDR = [81,238,226,237,256,187,90,88,228,157,186,154,78,63];
-const totalQDR = epQDR.map((v,i) => v + wlwQDR[i]);
-
-const epRFQ = [153,367,306,281,329,234,146,180,301,320,314,251,226,150];
-const wlwRFQ = [62,146,120,130,123,90,67,70,122,97,109,107,65,56];
-const totalRFQ = epRFQ.map((v,i) => v + wlwRFQ[i]);
-
-const epApp = [1082,1475,1685,1773,2523,2298,2877,2938,1495,1327,1052,1188,971,829];
-const wlwApp = [322,387,487,626,641,713,903,852,413,334,233,256,244,154];
-const totalApp = epApp.map((v,i) => v + wlwApp[i]);
-
-// Real t-7 series from 2026-03-15 ~ 2026-03-28.
-const epUVT7 = [17935,31710,31395,30562,28742,26113,16940,18073,31807,32149,32091,31606,28027,17956];
-const wlwUVT7 = [20462,33310,32784,31718,30219,26309,16554,19055,31158,30389,31114,30201,25729,17338];
-const totalUVT7 = epUVT7.map((v,i) => v + wlwUVT7[i]);
-
-const epAB2T7 = [73,203,187,179,163,134,55,60,256,183,183,208,145,61];
-const wlwAB2T7 = [8,56,50,41,34,27,7,9,58,37,36,44,40,7];
-const totalAB2T7 = epAB2T7.map((v,i) => v + wlwAB2T7[i]);
-
-const epQDRT7 = [273,415,353,344,306,248,200,198,435,367,369,386,298,205];
-const wlwQDRT7 = [92,219,214,248,224,156,77,81,238,226,237,256,187,90];
-const totalQDRT7 = epQDRT7.map((v,i) => v + wlwQDRT7[i]);
-
-const epAppT7 = [850,930,983,949,1312,1064,1002,1082,1475,1685,1773,2523,2298,2877];
-const wlwAppT7 = [167,223,253,223,293,354,259,322,387,487,626,641,713,903];
-const totalAppT7 = epAppT7.map((v,i) => v + wlwAppT7[i]);
-
-const epRFQT7 = [186,281,295,296,297,223,123,153,367,306,281,329,234,146];
-const wlwRFQT7 = [84,145,159,113,126,81,46,62,146,120,130,123,90,67];
-const totalRFQT7 = epRFQT7.map((v,i) => v + wlwRFQT7[i]);
-
-const uvWebTotals = [
-  ['ep', 'PC', 4646, 5385],
-  ['ep', 'WAP', 11252, 12573],
-  ['ep', '(unknown)', 4, 0],
-  ['wlw', 'PC', 3423, 4545],
-  ['wlw', 'WAP', 9983, 12794],
-  ['wlw', '(unknown)', 1, 1],
-];
-
-const uvWebRows = [
-  ['ep', '(unknown)', 'organic_search', 3, 0],
-  ['ep', '(unknown)', 'direct', 1, 0],
-  ['ep', 'PC', 'organic_search', 2868, 3426],
-  ['ep', 'PC', 'direct', 1219, 1299],
-  ['ep', 'PC', 'referral', 231, 289],
-  ['ep', 'PC', 'geo', 145, 173],
-  ['ep', 'PC', 'email', 119, 130],
-  ['ep', 'PC', 'display_performance', 92, 99],
-  ['ep', 'PC', 'Others', 9, 14],
-  ['ep', 'WAP', 'organic_search', 9514, 10774],
-  ['ep', 'WAP', 'direct', 1195, 1245],
-  ['ep', 'WAP', 'geo', 298, 318],
-  ['ep', 'WAP', 'referral', 136, 113],
-  ['ep', 'WAP', 'email', 78, 76],
-  ['ep', 'WAP', 'display_performance', 46, 45],
-  ['ep', 'WAP', 'Others', 29, 39],
-  ['wlw', '(unknown)', 'organic_search', 1, 1],
-  ['wlw', 'PC', 'organic_search', 2596, 3404],
-  ['wlw', 'PC', 'direct', 422, 504],
-  ['wlw', 'PC', 'paid_search', 154, 297],
-  ['wlw', 'PC', 'referral', 134, 205],
-  ['wlw', 'PC', 'email', 57, 66],
-  ['wlw', 'PC', 'geo', 46, 44],
-  ['wlw', 'PC', 'Others', 27, 39],
-  ['wlw', 'WAP', 'organic_search', 8766, 11007],
-  ['wlw', 'WAP', 'direct', 788, 979],
-  ['wlw', 'WAP', 'paid_search', 249, 628],
-  ['wlw', 'WAP', 'geo', 110, 123],
-  ['wlw', 'WAP', 'referral', 44, 50],
-  ['wlw', 'WAP', 'email', 29, 19],
-  ['wlw', 'WAP', 'Others', 11, 13],
-];
-
-const uvAppTotals = [
-  ['ep', 836, 2877],
-  ['wlw', 155, 903],
-];
-
-const abWebTotals = [
-  ['ep', false, '(unknown)', 69, 43],
-  ['ep', false, 'PC', 19, 38],
-  ['ep', false, 'WAP', 17, 18],
-  ['ep', true, '(unknown)', 17, 11],
-  ['ep', true, 'PC', 13, 5],
-  ['ep', true, 'WAP', 9, 7],
-  ['wlw', false, '(unknown)', 24, 14],
-  ['wlw', false, 'PC', 3, 18],
-  ['wlw', false, 'WAP', 13, 25],
-  ['wlw', true, '(unknown)', 2, 0],
-  ['wlw', true, 'PC', 0, 2],
-  ['wlw', true, 'WAP', 0, 1],
-];
-
-const abWebRows = [
-  ['ep', '(unknown)', false, '(unknown)', 69, 43],
-  ['ep', 'PC', false, 'direct', 10, 14],
-  ['ep', 'PC', false, 'organic_search', 6, 13],
-  ['ep', 'PC', false, 'referral', 2, 6],
-  ['ep', 'PC', false, 'geo', 1, 3],
-  ['ep', 'PC', false, 'email', 1, 1],
-  ['ep', 'PC', false, 'Others', 0, 1],
-  ['ep', 'WAP', false, 'organic_search', 12, 10],
-  ['ep', 'WAP', false, 'referral', 2, 0],
-  ['ep', 'WAP', false, 'geo', 2, 2],
-  ['ep', 'WAP', false, 'direct', 1, 6],
-  ['ep', '(unknown)', true, '(unknown)', 17, 11],
-  ['ep', 'PC', true, 'organic_search', 8, 2],
-  ['ep', 'PC', true, 'direct', 4, 0],
-  ['ep', 'PC', true, 'geo', 1, 0],
-  ['ep', 'PC', true, 'display_performance', 0, 1],
-  ['ep', 'PC', true, 'email', 0, 2],
-  ['ep', 'WAP', true, 'organic_search', 7, 5],
-  ['ep', 'WAP', true, 'geo', 2, 0],
-  ['ep', 'WAP', true, 'referral', 0, 1],
-  ['ep', 'WAP', true, 'direct', 0, 1],
-  ['wlw', '(unknown)', false, '(unknown)', 24, 14],
-  ['wlw', 'PC', false, 'organic_search', 2, 10],
-  ['wlw', 'PC', false, 'direct', 1, 4],
-  ['wlw', 'PC', false, 'paid_search', 0, 3],
-  ['wlw', 'PC', false, 'email', 0, 1],
-  ['wlw', 'WAP', false, 'organic_search', 6, 19],
-  ['wlw', 'WAP', false, 'geo', 3, 0],
-  ['wlw', 'WAP', false, 'paid_search', 3, 5],
-  ['wlw', 'WAP', false, 'direct', 1, 1],
-  ['wlw', '(unknown)', true, '(unknown)', 2, 0],
-  ['wlw', 'PC', true, 'paid_search', 0, 2],
-  ['wlw', 'WAP', true, 'organic_search', 0, 1],
-];
-
-const abSourceTotals = [
-  ['ep', 'app', false, 72, 87],
-  ['ep', 'app', true, 31, 27],
-  ['ep', 'alibaba', false, 119, 125],
-  ['ep', 'alibaba', true, 27, 12],
-  ['wlw', 'app', false, 6, 12],
-  ['wlw', 'app', true, 1, 4],
-  ['wlw', 'alibaba', false, 69, 82],
-  ['wlw', 'alibaba', true, 4, 0],
-];
-
+// ===================== UTILITY FUNCTIONS =====================
 function hexToRgba(hex, alpha) {
-  const clean = hex.replace('#', '');
-  const normalized = clean.length === 3
-    ? clean.split('').map((c) => c + c).join('')
-    : clean;
-  const value = parseInt(normalized, 16);
-  const r = (value >> 16) & 255;
-  const g = (value >> 8) & 255;
-  const b = value & 255;
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  const c = hex.replace('#','');
+  const n = c.length === 3 ? c.split('').map(x=>x+x).join('') : c;
+  const v = parseInt(n,16);
+  return `rgba(${(v>>16)&255},${(v>>8)&255},${v&255},${alpha})`;
 }
-
-function currentLine(color) {
-  return {
-    borderColor: color,
-    borderWidth: 2.6,
-    tension: 0.3,
-    pointRadius: 2.5,
-    pointHoverRadius: 4,
-    fill: false,
-  };
+function currentLine(color) { return { borderColor:color, borderWidth:2.6, tension:0.3, pointRadius:2.5, pointHoverRadius:4, fill:false }; }
+function compareLine(color) { return { borderColor:hexToRgba(color,0.58), borderDash:[6,4], borderWidth:1.5, tension:0.3, pointRadius:0, pointHoverRadius:0, fill:'-1', backgroundColor:hexToRgba(color,0.10) }; }
+function formatNumber(v) { return v==null?'—':Number(v).toLocaleString('en-US'); }
+function calcWow(c,p) { return (p==null||p===0)?null:((c-p)/p)*100; }
+function wowText(c,p) { const pct=calcWow(c,p); if(pct==null||Number.isNaN(pct)) return '—'; return `${pct>0?'+':''}${pct.toFixed(1)}%`; }
+function wowClass(c,p) { const pct=calcWow(c,p); if(pct==null||Number.isNaN(pct)) return 'neutral'; return pct>0?'up':pct<0?'down':'neutral'; }
+function escapeHtml(v) { return String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+function channelLabel(v) {
+  const m = {organic_search:'Organic Search',direct:'Direct',paid_search:'Paid Search',referral:'Referral',email:'Email',geo:'Geo',display_performance:'Display',organic_social:'Organic Social',affiliate:'Affiliate',organic_video:'Organic Video',display_brand:'Display Brand',other:'Other',Others:'Others','(unknown)':'Others'};
+  return m[v]||v;
 }
-
-function compareLine(color) {
-  return {
-    borderColor: hexToRgba(color, 0.58),
-    borderDash: [6, 4],
-    borderWidth: 1.5,
-    tension: 0.3,
-    pointRadius: 0,
-    pointHoverRadius: 0,
-    fill: '-1',
-    backgroundColor: hexToRgba(color, 0.10),
-  };
-}
-
-function formatNumber(value) {
-  return value == null ? '—' : Number(value).toLocaleString('en-US');
-}
-
-function calcWow(curr, prev) {
-  if (prev == null || prev === 0) return null;
-  return ((curr - prev) / prev) * 100;
-}
-
-function wowText(curr, prev) {
-  const pct = calcWow(curr, prev);
-  if (pct == null || Number.isNaN(pct)) return '—';
-  const rounded = pct.toFixed(1);
-  return `${pct > 0 ? '+' : ''}${rounded}%`;
-}
-
-function wowClass(curr, prev) {
-  const pct = calcWow(curr, prev);
-  if (pct == null || Number.isNaN(pct)) return 'neutral';
-  if (pct > 0) return 'up';
-  if (pct < 0) return 'down';
-  return 'neutral';
-}
-
-function renderDAB2Progress() {
-  const TARGET = 500;
-  const currTotal = totalAB2[totalAB2.length - 1];
-  const prevTotal = totalAB2T7[totalAB2T7.length - 1];
-  const currEp = epAB2[epAB2.length - 1];
-  const currWlw = wlwAB2[wlwAB2.length - 1];
-  const pct = Math.min(Math.round(currTotal / TARGET * 100), 100);
-  const fillClass = pct < 40 ? 'low' : pct < 70 ? 'mid' : 'high';
-  const wow = wowText(currTotal, prevTotal);
-  const el = document.getElementById('dab2-section');
-  if (!el) return;
-  el.innerHTML = `
-    <div class="dab2-header">
-      <span class="dab2-title">D-AB2 Target Tracking</span>
-      <span class="dab2-value">${currTotal} <span class="target">/ ${TARGET}</span></span>
-    </div>
-    <div class="progress-track">
-      <div class="progress-fill ${fillClass}" style="width:${pct}%"></div>
-    </div>
-    <div class="dab2-detail">
-      <span>达成率 ${pct}%</span>
-      <span>ep ${currEp} · wlw ${currWlw}</span>
-      <span>WoW ${wow}</span>
-    </div>`;
-}
-
-function renderTrendMeta(targetId, items) {
-  const target = document.getElementById(targetId);
-  if (!target) return;
-  target.innerHTML = items.map((item, index) => `
-    <div class="metric ${index === 0 ? 'primary' : ''}">
-      <span class="name">${item.name}</span>
-      <span class="value">${formatNumber(item.current)}</span>
-      <span class="wow ${wowClass(item.current, item.prev)}">（WoW ${wowText(item.current, item.prev)}）</span>
-    </div>
-  `).join('');
-}
-
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
-}
-
-function channelLabel(value) {
-  const map = {
-    organic_search: 'Organic Search',
-    direct: 'Direct',
-    paid_search: 'Paid Search',
-    referral: 'Referral',
-    email: 'Email',
-    geo: 'Geo',
-    display_performance: 'Display',
-    organic_social: 'Organic Social',
-    affiliate: 'Affiliate',
-    organic_video: 'Organic Video',
-    display_brand: 'Display Brand',
-    other: 'Other',
-    Others: 'Others',
-    '(unknown)': 'Others',
-  };
-  return map[value] || value;
-}
-
-function endpointLabel(value) {
-  return value === '(unknown)' ? 'Others' : value;
-}
-
-function normalizeBucket(value) {
-  return value === '(unknown)' ? 'Others' : value;
-}
+function endpointLabel(v) { return v==='(unknown)'?'Others':v; }
+function normalizeBucket(v) { return v==='(unknown)'?'Others':v; }
 
 function aggregateRows(rows) {
   const map = new Map();
   for (const row of rows) {
-    const endpointIsUnknown = row.endpoint === '(unknown)';
-    const endpoint = endpointIsUnknown ? 'Others' : normalizeBucket(row.endpoint);
-    const channel = endpointIsUnknown ? 'Others' : normalizeBucket(row.channel);
+    const eu = row.endpoint==='(unknown)';
+    const endpoint = eu?'Others':normalizeBucket(row.endpoint);
+    const channel = eu?'Others':normalizeBucket(row.channel);
     const key = `${endpoint}__${channel}`;
-    const existing = map.get(key) || { endpoint, channel, current: 0, prev: 0 };
-    existing.current += row.current;
-    existing.prev += row.prev;
-    map.set(key, existing);
+    const e = map.get(key)||{endpoint,channel,current:0,prev:0};
+    e.current+=row.current; e.prev+=row.prev;
+    map.set(key,e);
   }
   return [...map.values()];
 }
 
-function getWebRows(metricKey, platform) {
-  if (metricKey === 'uv') {
-    return aggregateRows(uvWebRows
-      .filter((row) => row[0] === platform)
-      .map((row) => ({
-        endpoint: row[1],
-        channel: row[2],
-        current: row[3],
-        prev: row[4],
-      })));
+function getWebRows(d, metricKey, platform) {
+  if (!d) return [];
+  if (metricKey==='uv') {
+    return aggregateRows(d.uvWebRows.filter(r=>r[0]===platform).map(r=>({endpoint:r[1],channel:r[2],current:r[3],prev:r[4]})));
   }
-
-  const isAb2 = metricKey === 'ab2';
-  return aggregateRows(abWebRows
-    .filter((row) => row[0] === platform && row[2] === isAb2)
-    .map((row) => ({
-      endpoint: row[1],
-      channel: row[3],
-      current: row[4],
-      prev: row[5],
-    })));
+  const isAb2 = metricKey==='ab2';
+  return aggregateRows(d.abWebRows.filter(r=>r[0]===platform&&r[2]===isAb2).map(r=>({endpoint:r[1],channel:r[3],current:r[4],prev:r[5]})));
 }
-
-function getEndpointTotals(metricKey, platform) {
-  const rows = getWebRows(metricKey, platform);
+function getEndpointTotals(d, metricKey, platform) {
+  const rows = getWebRows(d,metricKey,platform);
   const map = new Map();
-  for (const row of rows) {
-    const existing = map.get(row.endpoint) || { endpoint: row.endpoint, current: 0, prev: 0 };
-    existing.current += row.current;
-    existing.prev += row.prev;
-    map.set(row.endpoint, existing);
-  }
+  for (const r of rows) { const e=map.get(r.endpoint)||{endpoint:r.endpoint,current:0,prev:0}; e.current+=r.current; e.prev+=r.prev; map.set(r.endpoint,e); }
   return [...map.values()];
 }
+function getSourceRows(d, metricKey, platform) {
+  if (!d) return [];
+  if (metricKey==='uv') { const r=d.uvAppTotals.find(i=>i[0]===platform); return r?[{label:'App',current:r[1],prev:r[2]}]:[]; }
+  const isAb2=metricKey==='ab2';
+  const app=d.abSourceTotals.find(r=>r[0]===platform&&r[1]==='app'&&r[2]===isAb2);
+  const ali=d.abSourceTotals.find(r=>r[0]===platform&&r[1]==='alibaba'&&r[2]===isAb2);
+  return [app?{label:'App',current:app[3],prev:app[4]}:null, ali?{label:'Alibaba',current:ali[3],prev:ali[4]}:null].filter(Boolean);
+}
+function sumRows(rows) { return rows.reduce((a,r)=>({current:a.current+r.current,prev:a.prev+r.prev}),{current:0,prev:0}); }
+function buildBadge(label,cur,prev,primary) {
+  return `<div class="metric-badge ${primary?'primary':''}"><span class="k">${escapeHtml(label)}</span><span class="v">${formatNumber(cur)}</span><span class="d ${wowClass(cur,prev)}">（WoW ${wowText(cur,prev)}）</span></div>`;
+}
+function buildEndpointCard(title,rows,total,wide) {
+  const sorted = rows.slice().sort((a,b)=>b.current-a.current);
+  const body = sorted.map(r=>`<tr><td>${escapeHtml(channelLabel(r.channel))}</td><td class="num">${formatNumber(r.current)}</td><td class="num">${formatNumber(r.prev)}</td><td class="num ${wowClass(r.current,r.prev)}">${wowText(r.current,r.prev)}</td></tr>`).join('');
+  return `<div class="endpoint-card ${wide?'wide':''}"><h4>${escapeHtml(title)} <span style="font-weight:500;color:#64748b;font-size:11px;">总量 ${formatNumber(total.current)}（WoW ${wowText(total.current,total.prev)}）</span></h4><table class="mini-table"><thead><tr><th>渠道</th><th class="num">当前</th><th class="num">上周</th><th class="num">WoW</th></tr></thead><tbody>${body}</tbody></table></div>`;
+}
+function renderPlatformPanel(d, platform, metricKey) {
+  const webRows=getWebRows(d,metricKey,platform);
+  const totals=getEndpointTotals(d,metricKey,platform);
+  const webTotal=sumRows(totals);
+  const sources=getSourceRows(d,metricKey,platform);
+  const badges=[buildBadge('Web',webTotal.current,webTotal.prev,true),...sources.map(i=>buildBadge(i.label,i.current,i.prev))].join('');
+  const order=['PC','WAP','Others'];
+  const cards=order.map(ep=>{const r=webRows.filter(x=>x.endpoint===ep);const t=totals.find(x=>x.endpoint===ep);if(!r.length||!t)return'';return buildEndpointCard(endpointLabel(ep),r,t,ep==='Others');}).join('');
+  return `<div class="metric-panel"><h3>${escapeHtml(platform)}</h3><div class="metric-badges">${badges}</div><div class="endpoint-grid">${cards}</div></div>`;
+}
 
-function getSourceRows(metricKey, platform) {
-  if (metricKey === 'uv') {
-    const row = uvAppTotals.find((item) => item[0] === platform);
-    return row ? [{ label: 'App', current: row[1], prev: row[2] }] : [];
+// ===================== RENDER FUNCTIONS =====================
+function renderDatePicker() {
+  const el = document.getElementById('datePicker');
+  el.innerHTML = DATE_LIST.map(d => `<button class="date-btn ${d===currentDate?'active':''}" onclick="switchDate('${d}')">${d.slice(5)}</button>`).join('');
+}
+
+function renderHeader(data) {
+  document.getElementById('pageTitle').textContent = `UG 日报 | ${data.title}`;
+  document.getElementById('pageSubtitle').textContent = `对比基准：${data.wowDate} | 数据延迟 ~${data.latency} 天 | 生成时间：${data.genDate}`;
+  document.title = `UG 日报 ${data.title.split('（')[0]}`;
+}
+
+function renderDAB2(t) {
+  const TARGET=500;
+  const epAB2=t.epAB2, wlwAB2=t.wlwAB2;
+  const totalAB2=epAB2.map((v,i)=>v+wlwAB2[i]);
+  const epAB2T7=t.epAB2T7, wlwAB2T7=t.wlwAB2T7;
+  const totalAB2T7=epAB2T7.map((v,i)=>v+wlwAB2T7[i]);
+  const curr=totalAB2[13], prev=totalAB2T7[13];
+  const pct=Math.min(Math.round(curr/TARGET*100),100);
+  const cls=pct<40?'low':pct<70?'mid':'high';
+  document.getElementById('dab2-section').innerHTML=`
+    <div class="dab2-header"><span class="dab2-title">D-AB2 Target Tracking</span><span class="dab2-value">${curr} <span class="target">/ ${TARGET}</span></span></div>
+    <div class="progress-track"><div class="progress-fill ${cls}" style="width:${pct}%"></div></div>
+    <div class="dab2-detail"><span>达成率 ${pct}%</span><span>ep ${epAB2[13]} · wlw ${wlwAB2[13]}</span><span>WoW ${wowText(curr,prev)}</span></div>`;
+}
+
+function renderSummary(s) {
+  document.getElementById('coreVerdict').textContent = DATA[currentDate].verdict;
+  function item(label,val,prev,color) {
+    const dir=wowClass(val,prev);
+    return `<div class="summary-item"><div class="label">${label}</div><div class="value" ${color?`style="color:${color}"`:''}>${formatNumber(val)}</div><div class="change ${dir}">WoW ${wowText(val,prev)}</div></div>`;
   }
-
-  const isAb2 = metricKey === 'ab2';
-  const app = abSourceTotals.find((row) => row[0] === platform && row[1] === 'app' && row[2] === isAb2);
-  const alibaba = abSourceTotals.find((row) => row[0] === platform && row[1] === 'alibaba' && row[2] === isAb2);
-  return [
-    app ? { label: 'App', current: app[3], prev: app[4] } : null,
-    alibaba ? { label: 'Alibaba', current: alibaba[3], prev: alibaba[4] } : null,
-  ].filter(Boolean);
+  const abSplit = `<div class="summary-item"><div class="label">AB 拆分（人头）</div><div style="display:flex;justify-content:center;gap:24px;margin-top:6px;">
+    <div style="text-align:center;"><div style="font-size:11px;color:#666;">QDR</div><div style="font-size:22px;font-weight:700;">${formatNumber(s.qdrAB)}</div><div class="change ${wowClass(s.qdrAB,s.qdrABPrev)}" style="font-size:12px;">${wowText(s.qdrAB,s.qdrABPrev)}</div></div>
+    <div style="text-align:center;"><div style="font-size:11px;color:#666;">RFQ</div><div style="font-size:22px;font-weight:700;">${formatNumber(s.rfqAB)}</div><div class="change ${wowClass(s.rfqAB,s.rfqABPrev)}" style="font-size:12px;">${wowText(s.rfqAB,s.rfqABPrev)}</div></div>
+  </div></div>`;
+  document.getElementById('summaryGrid').innerHTML =
+    item('Web UV',s.webUV,s.webUVPrev) + item('App UV',s.appUV,s.appUVPrev) +
+    item('AB（全口径）',s.ab,s.abPrev) + abSplit + item('AB2（全口径）',s.ab2,s.ab2Prev,s.ab2Color);
 }
 
-function sumRows(rows) {
-  return rows.reduce((acc, row) => {
-    acc.current += row.current;
-    acc.prev += row.prev;
-    return acc;
-  }, { current: 0, prev: 0 });
+function renderTrendMeta(id, items) {
+  const el=document.getElementById(id); if(!el)return;
+  el.innerHTML=items.map((it,i)=>`<div class="metric ${i===0?'primary':''}"><span class="name">${it.name}</span><span class="value">${formatNumber(it.current)}</span><span class="wow ${wowClass(it.current,it.prev)}">（WoW ${wowText(it.current,it.prev)}）</span></div>`).join('');
 }
 
-function buildBadge(label, current, prev, primary = false) {
-  return `
-    <div class="metric-badge ${primary ? 'primary' : ''}">
-      <span class="k">${escapeHtml(label)}</span>
-      <span class="v">${formatNumber(current)}</span>
-      <span class="d ${wowClass(current, prev)}">（WoW ${wowText(current, prev)}）</span>
-    </div>
-  `;
+function destroyCharts() { Object.values(chartInstances).forEach(c=>c.destroy()); for(const k in chartInstances) delete chartInstances[k]; }
+
+function makeChart(id, labels, datasets) {
+  const opts = {
+    responsive:true, maintainAspectRatio:false,
+    interaction:{mode:'index',intersect:false},
+    plugins:{legend:{position:'top',labels:{font:{size:11},filter:i=>!i.text.endsWith(' t-7')}}},
+    scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:false,ticks:{font:{size:10}}}}
+  };
+  chartInstances[id] = new Chart(document.getElementById(id), { type:'line', data:{labels,datasets}, options:opts });
 }
 
-function buildEndpointCard(title, rows, total, wide = false) {
-  const sorted = rows.slice().sort((a, b) => b.current - a.current);
-  const body = sorted.map((row) => `
-    <tr>
-      <td>${escapeHtml(channelLabel(row.channel))}</td>
-      <td class="num">${formatNumber(row.current)}</td>
-      <td class="num">${formatNumber(row.prev)}</td>
-      <td class="num ${wowClass(row.current, row.prev)}">${wowText(row.current, row.prev)}</td>
-    </tr>
-  `).join('');
+function renderCharts(t) {
+  destroyCharts();
+  const L = t.labels;
+  const sum = (a,b) => a.map((v,i)=>v+b[i]);
+  const epC='#3b82f6', wlwC='#f59e0b', totC='#1e293b';
 
-  return `
-    <div class="endpoint-card ${wide ? 'wide' : ''}">
-      <h4>${escapeHtml(title)} <span style="font-weight:500; color:#64748b; font-size:11px;">总量 ${formatNumber(total.current)}（WoW ${wowText(total.current, total.prev)}）</span></h4>
-      <table class="mini-table">
-        <thead>
-          <tr><th>渠道</th><th class="num">当前</th><th class="num">上周</th><th class="num">WoW</th></tr>
-        </thead>
-        <tbody>
-          ${body}
-        </tbody>
-      </table>
-    </div>
-  `;
+  const totalUV=sum(t.epUV,t.wlwUV), totalUVT7=sum(t.epUVT7,t.wlwUVT7);
+  const totalApp=sum(t.epApp,t.wlwApp), totalAppT7=sum(t.epAppT7,t.wlwAppT7);
+  const totalQDR=sum(t.epQDR,t.wlwQDR), totalQDRT7=sum(t.epQDRT7,t.wlwQDRT7);
+  const totalRFQ=sum(t.epRFQ,t.wlwRFQ), totalRFQT7=sum(t.epRFQT7,t.wlwRFQT7);
+  const totalAB2=sum(t.epAB2,t.wlwAB2), totalAB2T7=sum(t.epAB2T7,t.wlwAB2T7);
+
+  renderTrendMeta('uvMeta',[{name:'总',current:totalUV[13],prev:totalUVT7[13]},{name:'ep',current:t.epUV[13],prev:t.epUVT7[13]},{name:'wlw',current:t.wlwUV[13],prev:t.wlwUVT7[13]}]);
+  renderTrendMeta('appMeta',[{name:'总',current:totalApp[13],prev:totalAppT7[13]},{name:'ep',current:t.epApp[13],prev:t.epAppT7[13]},{name:'wlw',current:t.wlwApp[13],prev:t.wlwAppT7[13]}]);
+  renderTrendMeta('qdrMeta',[{name:'总',current:totalQDR[13],prev:totalQDRT7[13]},{name:'ep',current:t.epQDR[13],prev:t.epQDRT7[13]},{name:'wlw',current:t.wlwQDR[13],prev:t.wlwQDRT7[13]}]);
+  renderTrendMeta('rfqMeta',[{name:'总',current:totalRFQ[13],prev:totalRFQT7[13]},{name:'ep',current:t.epRFQ[13],prev:t.epRFQT7[13]},{name:'wlw',current:t.wlwRFQ[13],prev:t.wlwRFQT7[13]}]);
+  renderTrendMeta('ab2Meta',[{name:'总',current:totalAB2[13],prev:totalAB2T7[13]},{name:'ep',current:t.epAB2[13],prev:t.epAB2T7[13]},{name:'wlw',current:t.wlwAB2[13],prev:t.wlwAB2T7[13]}]);
+
+  makeChart('uvChart',L,[{label:'全站',data:totalUV,...currentLine(totC)},{label:'全站 t-7',data:totalUVT7,...compareLine(totC)},{label:'ep',data:t.epUV,...currentLine(epC)},{label:'ep t-7',data:t.epUVT7,...compareLine(epC)},{label:'wlw',data:t.wlwUV,...currentLine(wlwC)},{label:'wlw t-7',data:t.wlwUVT7,...compareLine(wlwC)}]);
+  makeChart('appChart',L,[{label:'全站',data:totalApp,...currentLine(totC)},{label:'全站 t-7',data:totalAppT7,...compareLine(totC)},{label:'ep',data:t.epApp,...currentLine(epC)},{label:'ep t-7',data:t.epAppT7,...compareLine(epC)},{label:'wlw',data:t.wlwApp,...currentLine(wlwC)},{label:'wlw t-7',data:t.wlwAppT7,...compareLine(wlwC)}]);
+  makeChart('qdrChart',L,[{label:'全站',data:totalQDR,...currentLine(totC)},{label:'全站 t-7',data:totalQDRT7,...compareLine(totC)},{label:'ep',data:t.epQDR,...currentLine(epC)},{label:'ep t-7',data:t.epQDRT7,...compareLine(epC)},{label:'wlw',data:t.wlwQDR,...currentLine(wlwC)},{label:'wlw t-7',data:t.wlwQDRT7,...compareLine(wlwC)}]);
+  makeChart('rfqChart',L,[{label:'全站',data:totalRFQ,...currentLine(totC)},{label:'全站 t-7',data:totalRFQT7,...compareLine(totC)},{label:'ep',data:t.epRFQ,...currentLine(epC)},{label:'ep t-7',data:t.epRFQT7,...compareLine(epC)},{label:'wlw',data:t.wlwRFQ,...currentLine(wlwC)},{label:'wlw t-7',data:t.wlwRFQT7,...compareLine(wlwC)}]);
+  makeChart('ab2Chart',L,[{label:'全站',data:totalAB2,...currentLine(totC)},{label:'全站 t-7',data:totalAB2T7,...compareLine(totC)},{label:'ep',data:t.epAB2,...currentLine(epC)},{label:'ep t-7',data:t.epAB2T7,...compareLine(epC)},{label:'wlw',data:t.wlwAB2,...currentLine(wlwC)},{label:'wlw t-7',data:t.wlwAB2T7,...compareLine(wlwC)}]);
 }
 
-function renderPlatformPanel(platform, metricKey) {
-  const webRows = getWebRows(metricKey, platform);
-  const totals = getEndpointTotals(metricKey, platform);
-  const webTotal = sumRows(totals);
-  const sources = getSourceRows(metricKey, platform);
-  const totalBadges = [
-    buildBadge('Web', webTotal.current, webTotal.prev, true),
-    ...sources.map((item) => buildBadge(item.label, item.current, item.prev)),
-  ].join('');
-
-  const endpointOrder = ['PC', 'WAP', 'Others'];
-  const endpointCards = endpointOrder.map((endpoint) => {
-    const rows = webRows.filter((row) => row.endpoint === endpoint);
-    const total = totals.find((item) => item.endpoint === endpoint);
-    if (!rows.length || !total) return '';
-    return buildEndpointCard(endpointLabel(endpoint), rows, total, endpoint === 'Others');
-  }).join('');
-
-  return `
-    <div class="metric-panel">
-      <h3>${escapeHtml(platform)}</h3>
-      <div class="metric-badges">${totalBadges}</div>
-      <div class="endpoint-grid">${endpointCards}</div>
-    </div>
-  `;
-}
-
-function renderDrillSection(targetId, metricKey) {
-  const target = document.getElementById(targetId);
-  if (!target) return;
-  target.innerHTML = `
-    <div class="drill-layout">
-      ${['ep', 'wlw'].map((platform) => renderPlatformPanel(platform, metricKey)).join('')}
-    </div>
-  `;
-}
-
-const commonOptions = {
-  responsive: true, maintainAspectRatio: false,
-  interaction: { mode: 'index', intersect: false },
-  plugins: {
-    legend: {
-      position: 'top',
-      labels: {
-        font: { size: 11 },
-        filter: (item) => !item.text.endsWith(' t-7')
-      }
-    }
-  },
-  scales: {
-    x: { grid: { display: false }, ticks: { font: { size: 10 } } },
-    y: { beginAtZero: false, ticks: { font: { size: 10 } } }
-  }
-};
-
-function makeChart(id, datasets, opts = {}) {
-  new Chart(document.getElementById(id), {
-    type: 'line',
-    data: { labels, datasets },
-    options: { ...commonOptions, ...opts }
+function renderDrills(drill) {
+  ['uv-drill','ab-drill','ab2-drill'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!drill) { el.innerHTML = '<p style="color:#94a3b8;font-size:13px;">该日期暂无 Device→Channel 下钻明细数据。</p>'; return; }
+    const metricKey = id.split('-')[0];
+    el.innerHTML = `<div class="drill-layout">${['ep','wlw'].map(p=>renderPlatformPanel(drill,p,metricKey)).join('')}</div>`;
   });
 }
 
-const epColor = '#3b82f6';
-const wlwColor = '#f59e0b';
-const totalColor = '#1e293b';
+function renderAnomalies(list) {
+  document.getElementById('anomalyBody').innerHTML = list.map(a =>
+    `<tr ${a.bg?`style="background:${a.bg}"`:''}><td><span class="badge ${a.badge}">${a.icon}</span></td><td class="signal">${escapeHtml(a.signal)}</td><td class="action">${escapeHtml(a.action)}</td></tr>`
+  ).join('');
+}
 
-renderDAB2Progress();
+// ===================== SWITCH DATE =====================
+function switchDate(dateKey) {
+  currentDate = dateKey;
+  const data = DATA[dateKey];
+  renderDatePicker();
+  renderHeader(data);
+  renderDAB2(data.trends);
+  renderSummary(data.summary);
+  renderCharts(data.trends);
+  renderDrills(data.drill);
+  renderAnomalies(data.anomalies);
+}
 
-renderTrendMeta('uvMeta', [
-  { name: '总', current: totalUV[13], prev: totalUVT7[13] },
-  { name: 'ep', current: epUV[13], prev: epUVT7[13] },
-  { name: 'wlw', current: wlwUV[13], prev: wlwUVT7[13] },
-]);
-
-renderTrendMeta('appMeta', [
-  { name: '总', current: totalApp[13], prev: totalAppT7[13] },
-  { name: 'ep', current: epApp[13], prev: epAppT7[13] },
-  { name: 'wlw', current: wlwApp[13], prev: wlwAppT7[13] },
-]);
-
-renderTrendMeta('qdrMeta', [
-  { name: '总', current: totalQDR[13], prev: totalQDRT7[13] },
-  { name: 'ep', current: epQDR[13], prev: epQDRT7[13] },
-  { name: 'wlw', current: wlwQDR[13], prev: wlwQDRT7[13] },
-]);
-
-renderTrendMeta('rfqMeta', [
-  { name: '总', current: totalRFQ[13], prev: totalRFQT7[13] },
-  { name: 'ep', current: epRFQ[13], prev: epRFQT7[13] },
-  { name: 'wlw', current: wlwRFQ[13], prev: wlwRFQT7[13] },
-]);
-
-renderTrendMeta('ab2Meta', [
-  { name: '总', current: totalAB2[13], prev: totalAB2T7[13] },
-  { name: 'ep', current: epAB2[13], prev: epAB2T7[13] },
-  { name: 'wlw', current: wlwAB2[13], prev: wlwAB2T7[13] },
-]);
-
-makeChart('uvChart', [
-  { label: '全站', data: totalUV, ...currentLine(totalColor) },
-  { label: '全站 t-7', data: totalUVT7, ...compareLine(totalColor) },
-  { label: 'ep', data: epUV, ...currentLine(epColor) },
-  { label: 'ep t-7', data: epUVT7, ...compareLine(epColor) },
-  { label: 'wlw', data: wlwUV, ...currentLine(wlwColor) },
-  { label: 'wlw t-7', data: wlwUVT7, ...compareLine(wlwColor) }
-]);
-
-makeChart('ab2Chart', [
-  { label: '全站', data: totalAB2, ...currentLine(totalColor) },
-  { label: '全站 t-7', data: totalAB2T7, ...compareLine(totalColor) },
-  { label: 'ep', data: epAB2, ...currentLine(epColor) },
-  { label: 'ep t-7', data: epAB2T7, ...compareLine(epColor) },
-  { label: 'wlw', data: wlwAB2, ...currentLine(wlwColor) },
-  { label: 'wlw t-7', data: wlwAB2T7, ...compareLine(wlwColor) }
-]);
-
-makeChart('qdrChart', [
-  { label: '全站', data: totalQDR, ...currentLine(totalColor) },
-  { label: '全站 t-7', data: totalQDRT7, ...compareLine(totalColor) },
-  { label: 'ep', data: epQDR, ...currentLine(epColor) },
-  { label: 'ep t-7', data: epQDRT7, ...compareLine(epColor) },
-  { label: 'wlw', data: wlwQDR, ...currentLine(wlwColor) },
-  { label: 'wlw t-7', data: wlwQDRT7, ...compareLine(wlwColor) }
-]);
-
-makeChart('appChart', [
-  { label: '全站', data: totalApp, ...currentLine(totalColor) },
-  { label: '全站 t-7', data: totalAppT7, ...compareLine(totalColor) },
-  { label: 'ep', data: epApp, ...currentLine(epColor) },
-  { label: 'ep t-7', data: epAppT7, ...compareLine(epColor) },
-  { label: 'wlw', data: wlwApp, ...currentLine(wlwColor) },
-  { label: 'wlw t-7', data: wlwAppT7, ...compareLine(wlwColor) }
-]);
-
-makeChart('rfqChart', [
-  { label: '全站', data: totalRFQ, ...currentLine(totalColor) },
-  { label: '全站 t-7', data: totalRFQT7, ...compareLine(totalColor) },
-  { label: 'ep', data: epRFQ, ...currentLine(epColor) },
-  { label: 'ep t-7', data: epRFQT7, ...compareLine(epColor) },
-  { label: 'wlw', data: wlwRFQ, ...currentLine(wlwColor) },
-  { label: 'wlw t-7', data: wlwRFQT7, ...compareLine(wlwColor) }
-]);
-
-renderDrillSection('uv-drill', 'uv');
-renderDrillSection('ab-drill', 'ab');
-renderDrillSection('ab2-drill', 'ab2');
+// ===================== INIT =====================
+switchDate(currentDate);
 
 </script>
 </body>
