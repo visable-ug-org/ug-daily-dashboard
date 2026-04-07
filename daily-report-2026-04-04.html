@@ -15,6 +15,19 @@
   .card h2 { font-size: 18px; margin-bottom: 16px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
   .card h3 { font-size: 15px; margin: 16px 0 8px; color: #475569; }
 
+  .dab2-card { border-left: 4px solid #3b82f6; }
+  .dab2-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .dab2-title { font-size: 16px; font-weight: 700; }
+  .dab2-value { font-size: 28px; font-weight: 700; }
+  .dab2-value .target { font-size: 16px; font-weight: 400; color: #94a3b8; }
+  .progress-track { height: 16px; background: #e2e8f0; border-radius: 8px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 8px; }
+  .progress-fill.low { background: linear-gradient(90deg, #ef4444, #f97316); }
+  .progress-fill.mid { background: linear-gradient(90deg, #f59e0b, #eab308); }
+  .progress-fill.high { background: linear-gradient(90deg, #22c55e, #16a34a); }
+  .dab2-detail { margin-top: 10px; font-size: 13px; color: #64748b; display: flex; gap: 24px; }
+  .dab2-detail span { display: inline-flex; align-items: center; gap: 4px; }
+
   .summary-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
   .summary-item { text-align: center; padding: 16px; background: #f8f9fa; border-radius: 8px; }
   .summary-item .label { font-size: 12px; color: #666; margin-bottom: 4px; }
@@ -97,6 +110,9 @@
 <div class="container">
   <h1>UG 日报 | 2026-04-04（周六）</h1>
   <p class="subtitle">对比基准：2026-03-28（上周六） | 数据延迟 ~2 天 | 生成时间：2026-04-06</p>
+
+  <!-- D-AB2 目标进度 -->
+  <div class="card dab2-card" id="dab2-section"></div>
 
   <!-- 核心判断：卡片速览 -->
   <div class="card">
@@ -492,6 +508,32 @@ function wowClass(curr, prev) {
   return 'neutral';
 }
 
+function renderDAB2Progress() {
+  const TARGET = 500;
+  const currTotal = totalAB2[totalAB2.length - 1];
+  const prevTotal = totalAB2T7[totalAB2T7.length - 1];
+  const currEp = epAB2[epAB2.length - 1];
+  const currWlw = wlwAB2[wlwAB2.length - 1];
+  const pct = Math.min(Math.round(currTotal / TARGET * 100), 100);
+  const fillClass = pct < 40 ? 'low' : pct < 70 ? 'mid' : 'high';
+  const wow = wowText(currTotal, prevTotal);
+  const el = document.getElementById('dab2-section');
+  if (!el) return;
+  el.innerHTML = `
+    <div class="dab2-header">
+      <span class="dab2-title">D-AB2 Target Tracking</span>
+      <span class="dab2-value">${currTotal} <span class="target">/ ${TARGET}</span></span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill ${fillClass}" style="width:${pct}%"></div>
+    </div>
+    <div class="dab2-detail">
+      <span>达成率 ${pct}%</span>
+      <span>ep ${currEp} · wlw ${currWlw}</span>
+      <span>WoW ${wow}</span>
+    </div>`;
+}
+
 function renderTrendMeta(targetId, items) {
   const target = document.getElementById(targetId);
   if (!target) return;
@@ -716,6 +758,8 @@ function makeChart(id, datasets, opts = {}) {
 const epColor = '#3b82f6';
 const wlwColor = '#f59e0b';
 const totalColor = '#1e293b';
+
+renderDAB2Progress();
 
 renderTrendMeta('uvMeta', [
   { name: '总', current: totalUV[13], prev: totalUVT7[13] },
