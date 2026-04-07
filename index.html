@@ -3,63 +3,83 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UG Daily Dashboard</title>
+<title>UG 日报 2026-04-04</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f7fa; color: #1a1a2e; padding: 24px; }
   .container { max-width: 1400px; margin: 0 auto; }
-
-  .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
-  .header-row h1 { font-size: 24px; }
-  .subtitle { color: #666; font-size: 14px; margin-top: 4px; }
-
-  #datePicker {
-    padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 8px;
-    font-size: 14px; background: #fff; cursor: pointer; min-width: 160px;
-  }
-  #datePicker:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
-
+  h1 { font-size: 24px; margin-bottom: 4px; }
+  .subtitle { color: #666; margin-bottom: 24px; font-size: 14px; }
   .card { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
   .card h2 { font-size: 18px; margin-bottom: 16px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
   .card h3 { font-size: 15px; margin: 16px 0 8px; color: #475569; }
 
-  /* D-AB2 Progress Bar */
   .dab2-card { border-left: 4px solid #3b82f6; }
   .dab2-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
   .dab2-title { font-size: 16px; font-weight: 700; }
   .dab2-value { font-size: 28px; font-weight: 700; }
   .dab2-value .target { font-size: 16px; font-weight: 400; color: #94a3b8; }
   .progress-track { height: 16px; background: #e2e8f0; border-radius: 8px; overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: 8px; transition: width 0.6s ease; }
+  .progress-fill { height: 100%; border-radius: 8px; }
   .progress-fill.low { background: linear-gradient(90deg, #ef4444, #f97316); }
   .progress-fill.mid { background: linear-gradient(90deg, #f59e0b, #eab308); }
   .progress-fill.high { background: linear-gradient(90deg, #22c55e, #16a34a); }
   .dab2-detail { margin-top: 10px; font-size: 13px; color: #64748b; display: flex; gap: 24px; }
   .dab2-detail span { display: inline-flex; align-items: center; gap: 4px; }
 
-  /* Summary Cards */
   .summary-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
   .summary-item { text-align: center; padding: 16px; background: #f8f9fa; border-radius: 8px; }
   .summary-item .label { font-size: 12px; color: #666; margin-bottom: 4px; }
   .summary-item .value { font-size: 28px; font-weight: 700; }
   .summary-item .change { font-size: 13px; margin-top: 4px; font-weight: 600; }
-  .summary-item .sub-metric { margin-top: 8px; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 6px; }
   .up { color: #16a34a; }
   .down { color: #dc2626; }
   .neutral { color: #6b7280; }
 
-  .split-row { display: flex; justify-content: center; gap: 24px; margin-top: 6px; }
-  .split-col { text-align: center; }
-  .split-col .split-label { font-size: 11px; color: #666; }
-  .split-col .split-value { font-size: 22px; font-weight: 700; }
-  .split-col .change { font-size: 12px; }
-
-  /* Charts */
   .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
   .chart-container { position: relative; height: 260px; }
+  .chart-meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 10px; }
+  .chart-meta .metric { display: inline-flex; align-items: baseline; gap: 6px; background: #f8f9fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px 10px; font-size: 12px; line-height: 1.4; }
+  .chart-meta .metric.primary { background: #eef2ff; border-color: #c7d2fe; }
+  .chart-meta .metric .name { color: #64748b; }
+  .chart-meta .metric .value { font-weight: 700; color: #1e293b; }
+  .chart-meta .metric .wow { font-weight: 600; }
+  .chart-meta .metric .wow.up { color: #16a34a; }
+  .chart-meta .metric .wow.down { color: #dc2626; }
+  .chart-meta .metric .wow.neutral { color: #6b7280; }
 
-  /* Tables */
+  .note-card { border-left: 4px solid #3b82f6; background: #eff6ff; }
+  .note-label { font-size: 12px; font-weight: 700; color: #1d4ed8; margin-bottom: 6px; }
+  .note-text { font-size: 13px; line-height: 1.7; color: #1e293b; }
+  .section-note { color: #64748b; margin-bottom: 12px; font-size: 12px; line-height: 1.6; }
+  .drill-layout { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  .metric-panel { background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px; }
+  .metric-panel h3 { margin: 0 0 8px; font-size: 14px; color: #0f172a; }
+  .metric-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .metric-badge { display: inline-flex; align-items: baseline; gap: 6px; background: #fff; border: 1px solid #e5e7eb; border-radius: 999px; padding: 5px 10px; font-size: 12px; }
+  .metric-badge.primary { background: #eef2ff; border-color: #c7d2fe; }
+  .metric-badge .k { color: #64748b; }
+  .metric-badge .v { font-weight: 700; color: #0f172a; }
+  .metric-badge .d.up { color: #16a34a; }
+  .metric-badge .d.down { color: #dc2626; }
+  .metric-badge .d.neutral { color: #6b7280; }
+  .endpoint-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 10px; }
+  .endpoint-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; }
+  .endpoint-card.wide { grid-column: 1 / -1; }
+  .endpoint-card h4 { margin-bottom: 8px; font-size: 13px; color: #334155; }
+  .mini-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 0; }
+  .mini-table th, .mini-table td { padding: 6px 8px; border-bottom: 1px solid #eef2f7; }
+  .mini-table th { background: #f8fafc; font-size: 11px; }
+  .mini-table tr.subtotal { background: #f8fafc; font-weight: 700; }
+  .total-list { display: grid; gap: 8px; }
+  .total-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px 12px; }
+  .total-item .name { font-size: 12px; font-weight: 700; color: #0f172a; }
+  .total-item .value { font-size: 13px; color: #0f172a; }
+  .total-item .change.up { color: #16a34a; }
+  .total-item .change.down { color: #dc2626; }
+  .total-item .change.neutral { color: #6b7280; }
+
   table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
   th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #eee; }
   th { background: #f8f9fa; font-weight: 600; font-size: 12px; color: #475569; }
@@ -68,491 +88,758 @@
   tr.highlight-down { background: #fef2f2; }
   tr.highlight-up { background: #f0fdf4; }
 
-  /* Anomaly */
-  .alert-card { border-left: 4px solid #dc2626; }
   .alert-table { width: 100%; border-collapse: collapse; font-size: 13px; }
   .alert-table th { background: #f8f9fa; padding: 10px 12px; text-align: left; font-size: 12px; }
   .alert-table td { padding: 10px 12px; border-bottom: 1px solid #eee; vertical-align: top; }
   .alert-table .signal { max-width: 400px; }
   .alert-table .action { max-width: 350px; color: #475569; }
   .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-right: 4px; }
-  .badge-P0 { background: #fee2e2; color: #991b1b; }
-  .badge-P1 { background: #fee2e2; color: #991b1b; }
-  .badge-P2 { background: #fef3c7; color: #92400e; }
-  .badge-OK { background: #dcfce7; color: #166534; }
+  .badge-p0 { background: #fee2e2; color: #991b1b; }
+  .badge-p1 { background: #fee2e2; color: #991b1b; }
+  .badge-p2 { background: #fef3c7; color: #92400e; }
+  .badge-ok { background: #dcfce7; color: #166534; }
 
   .funnel-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
   .platform-label { font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 8px; padding: 4px 8px; background: #e2e8f0; border-radius: 6px; display: inline-block; }
 
   .footer { margin-top: 16px; padding: 16px 24px; color: #94a3b8; font-size: 11px; line-height: 1.8; text-align: center; }
   .footer span { margin: 0 8px; }
-
-  /* Loading / Empty */
-  #loading { text-align: center; padding: 80px 0; color: #94a3b8; font-size: 16px; }
-  #loading .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid #e2e8f0; border-top-color: #3b82f6; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  #empty-state { text-align: center; padding: 80px 0; color: #94a3b8; }
-  #empty-state h2 { font-size: 20px; margin-bottom: 8px; color: #64748b; }
-
-  @media (max-width: 900px) {
-    .summary-grid { grid-template-columns: repeat(3, 1fr); }
-    .chart-row, .funnel-row { grid-template-columns: 1fr; }
-    .header-row { flex-direction: column; gap: 12px; }
-  }
 </style>
 </head>
 <body>
 <div class="container">
-  <div class="header-row">
-    <div>
-      <h1>UG Daily Dashboard</h1>
-      <p class="subtitle" id="subtitle">加载中…</p>
+  <h1>UG 日报 | 2026-04-04（周六）</h1>
+  <p class="subtitle">对比基准：2026-03-28（上周六） | 数据延迟 ~2 天 | 生成时间：2026-04-06</p>
+
+  <!-- D-AB2 目标进度 -->
+  <div class="card dab2-card" id="dab2-section"></div>
+
+  <!-- 核心判断：卡片速览 -->
+  <div class="card">
+    <h2>核心判断</h2>
+    <p style="color:#475569; margin-bottom:16px; font-size:14px;">UV 降 → AB 降 → 但 AB2 逆势增长。AB→AB2% 从 13.8% 提升至 21.5%。</p>
+    <div class="summary-grid">
+      <div class="summary-item">
+        <div class="label">Web UV</div>
+        <div class="value">29,307</div>
+        <div class="change down">WoW -17.0%</div>
+      </div>
+      <div class="summary-item">
+        <div class="label">App UV</div>
+        <div class="value">983</div>
+        <div class="change down">WoW -74.0%</div>
+      </div>
+      <div class="summary-item">
+        <div class="label">AB（全口径）</div>
+        <div class="value">461</div>
+        <div class="change down">WoW -6.7%</div>
+      </div>
+      <div class="summary-item">
+        <div class="label">AB 拆分（人头）</div>
+        <div style="display:flex; justify-content:center; gap:24px; margin-top:6px;">
+          <div style="text-align:center;">
+            <div style="font-size:11px; color:#666;">QDR</div>
+            <div style="font-size:22px; font-weight:700;">279</div>
+            <div class="change down" style="font-size:12px;">-5.4%</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:11px; color:#666;">RFQ</div>
+            <div style="font-size:22px; font-weight:700;">206</div>
+            <div class="change down" style="font-size:12px;">-3.3%</div>
+          </div>
+        </div>
+      </div>
+      <div class="summary-item">
+        <div class="label">AB2（全口径）</div>
+        <div class="value" style="color:#16a34a;">99</div>
+        <div class="change up">WoW +45.6%</div>
+      </div>
     </div>
-    <select id="datePicker" disabled><option>加载中…</option></select>
   </div>
 
-  <div id="loading"><span class="spinner"></span>正在加载数据…</div>
-  <div id="empty-state" style="display:none"><h2>暂无数据</h2><p>请先运行 <code>node scripts/generate.js</code> 生成数据。</p></div>
+  <div class="card note-card">
+    <div class="note-label">数据卡点</div>
+    <div class="note-text">Web 侧虽可拆至 PC / WAP / Channel，但 AB / AB2 归因稳定性有限，Others 偏大，当前拆分主要用于定位。</div>
+    <div class="note-text" style="margin-top:6px;">App / Alibaba 目前仅展示总量。进一步下钻正在和数据团队沟通中。关联人：数据团队</div>
+  </div>
 
-  <div id="main-content" style="display:none">
-
-    <!-- D-AB2 Progress -->
-    <div class="card dab2-card" id="dab2-section"></div>
-
-    <!-- Core Verdict + Summary -->
-    <div class="card">
-      <h2>核心判断</h2>
-      <p id="core-verdict" style="color:#475569; margin-bottom:16px; font-size:14px;"></p>
-      <div class="summary-grid" id="summary-grid"></div>
-    </div>
-
-    <!-- UV Trends -->
-    <div class="card">
-      <h2>UV 层趋势（14 天）</h2>
-      <div class="chart-row">
-        <div><h3>Web UV（ep + wlw）</h3><div class="chart-container"><canvas id="uvChart"></canvas></div></div>
-        <div><h3>App UV（ep + wlw）</h3><div class="chart-container"><canvas id="appChart"></canvas></div></div>
+  <!-- UV 层趋势 -->
+  <div class="card">
+    <h2>UV 层趋势（14 天）</h2>
+    <p style="color:#64748b; margin-bottom:10px; font-size:12px;">实线 = 当前 14 天，虚线 = 上周同日（t-7），浅色带表示两者差距。</p>
+    <div class="chart-row">
+      <div>
+        <h3>Web UV（current vs t-7）</h3>
+        <div class="chart-meta" id="uvMeta"></div>
+        <div class="chart-container"><canvas id="uvChart"></canvas></div>
+      </div>
+      <div>
+        <h3>App UV（current vs t-7）</h3>
+        <div class="chart-meta" id="appMeta"></div>
+        <div class="chart-container"><canvas id="appChart"></canvas></div>
       </div>
     </div>
+  </div>
 
-    <!-- AB Trends -->
-    <div class="card">
-      <h2>AB 层趋势（14 天）</h2>
-      <div class="chart-row">
-        <div><h3>QDR AB（ep + wlw）</h3><div class="chart-container"><canvas id="qdrChart"></canvas></div></div>
-        <div><h3>RFQ AB（ep + wlw）</h3><div class="chart-container"><canvas id="rfqChart"></canvas></div></div>
+  <!-- AB 层趋势 -->
+  <div class="card">
+    <h2>AB 层趋势（14 天）</h2>
+    <p style="color:#64748b; margin-bottom:10px; font-size:12px;">实线 = 当前 14 天，虚线 = 上周同日（t-7），浅色带表示两者差距。</p>
+    <div class="chart-row">
+      <div>
+        <h3>QDR AB（current vs t-7）</h3>
+        <div class="chart-meta" id="qdrMeta"></div>
+        <div class="chart-container"><canvas id="qdrChart"></canvas></div>
+      </div>
+      <div>
+        <h3>RFQ AB（current vs t-7）</h3>
+        <div class="chart-meta" id="rfqMeta"></div>
+        <div class="chart-container"><canvas id="rfqChart"></canvas></div>
       </div>
     </div>
+  </div>
 
-    <!-- AB2 Trends -->
-    <div class="card">
-      <h2>AB2 层趋势（14 天）</h2>
-      <div style="max-width:680px;"><h3>AB2（ep + wlw）</h3><div class="chart-container"><canvas id="ab2Chart"></canvas></div></div>
+  <!-- AB2 层趋势 -->
+  <div class="card">
+    <h2>AB2 层趋势（14 天）</h2>
+    <p style="color:#64748b; margin-bottom:10px; font-size:12px;">实线 = 当前 14 天，虚线 = 上周同日（t-7），浅色带表示两者差距。</p>
+    <div style="max-width:680px;">
+      <h3>AB2（current vs t-7）</h3>
+      <div class="chart-meta" id="ab2Meta"></div>
+      <div class="chart-container"><canvas id="ab2Chart"></canvas></div>
     </div>
+  </div>
 
-    <!-- UV Drilldown -->
-    <div class="card">
-      <h2>UV 下钻（漏斗第一层）</h2>
-      <div class="funnel-row">
-        <div><span class="platform-label">ep</span><div id="ep-uv-table"></div></div>
-        <div><span class="platform-label">wlw</span><div id="wlw-uv-table"></div></div>
-      </div>
-    </div>
+  <!-- UV 下钻 -->
+  <div class="card">
+    <h2>UV 下钻（漏斗第一层）</h2>
+    <p class="section-note">Web 按 `PC / WAP / Others -> Channel` 展开；App 只看总量，Others 已合并低频渠道和未识别项。</p>
+    <div id="uv-drill"></div>
+  </div>
 
-    <!-- AB Drilldown -->
-    <div class="card">
-      <h2>AB 下钻（漏斗第二层）</h2>
-      <p style="color:#475569; margin-bottom:12px; font-size:13px;">口径：active_buyers 去重人头（buyer_id），按 request_type 拆分。同一 buyer 可能同时有 QDR + RFQ，故 QDR AB + RFQ AB &gt; AB 合计。</p>
-      <h3 id="qdr-ab-header"></h3>
-      <div id="qdr-ab-table"></div>
-      <h3 id="rfq-ab-header" style="margin-top:24px;"></h3>
-      <div id="rfq-ab-table"></div>
-    </div>
+  <!-- AB 下钻 -->
+  <div class="card">
+    <h2>AB 下钻（漏斗第二层）</h2>
+    <p class="section-note">Web 按 `PC / WAP / Others -> Channel` 展开；App / Alibaba 只看总量，Others 已合并低频渠道和未识别项。</p>
+    <div id="ab-drill"></div>
+  </div>
 
-    <!-- AB2 Drilldown -->
-    <div class="card">
-      <h2>AB2 下钻（漏斗第三层）</h2>
-      <p id="ab2-drill-summary" style="color:#475569; margin-bottom:12px; font-size:14px;"></p>
-      <div id="ab2-table"></div>
-    </div>
+  <!-- AB2 下钻 -->
+  <div class="card">
+    <h2>AB2 下钻（漏斗第三层）</h2>
+    <p class="section-note">Web 按 `PC / WAP / Others -> Channel` 展开；App / Alibaba 只看总量，Others 已合并低频渠道和未识别项。</p>
+    <div id="ab2-drill"></div>
+  </div>
 
-    <!-- Anomaly & Action -->
-    <div class="card alert-card">
-      <h2>异动 &amp; 行动</h2>
-      <p style="color:#666; margin-bottom:16px; font-size:13px;">汇总全部层级的关键信号，从高到低排列。扫完此表 = 读完全文。</p>
-      <table class="alert-table">
-        <thead><tr><th style="width:80px;">级别</th><th class="signal">信号</th><th class="action">下一步</th></tr></thead>
-        <tbody id="anomaly-body"></tbody>
-      </table>
-    </div>
+  <!-- 异动 & 行动 -->
+  <div class="card" style="border-left: 4px solid #dc2626;">
+    <h2>异动 & 行动</h2>
+    <p style="color:#666; margin-bottom:16px; font-size:13px;">汇总全部层级的关键信号，从高到低排列。扫完此表 = 读完全文。</p>
+    <table class="alert-table">
+      <thead><tr><th style="width:80px;">级别</th><th class="signal">信号</th><th class="action">下一步</th></tr></thead>
+      <tbody>
+        <tr style="background:#fef2f2;">
+          <td><span class="badge badge-p0">❌ P0</span></td>
+          <td class="signal">App UV ep -71.2%, wlw -82.9%（工作日同比亦 -60%+，真实下降）</td>
+          <td class="action">排查 App UV 大幅下滑根因</td>
+        </tr>
+        <tr style="background:#fef2f2;">
+          <td><span class="badge badge-p1">❌ P1</span></td>
+          <td class="signal">wlw Paid Search UV -56.6%（-517，贡献跌幅 13%）</td>
+          <td class="action">排查 wlw Paid Search 掉量根因</td>
+        </tr>
+        <tr style="background:#fef2f2;">
+          <td><span class="badge badge-p1">❌ P1</span></td>
+          <td class="signal">wlw Organic Search UV -21.2%（-3,047，贡献跌幅 78%）</td>
+          <td class="action">先观察周一，若连续下降再下钻页面类型</td>
+        </tr>
+        <tr style="background:#fef2f2;">
+          <td><span class="badge badge-p1">❌ P1</span></td>
+          <td class="signal">wlw QDR AB -30.0%（app -57.1%, web -31.6%）</td>
+          <td class="action">排查 App UV；Web 下钻渠道×页面</td>
+        </tr>
+        <tr style="background:#fffbeb;">
+          <td><span class="badge badge-p2">⚠️ P2</span></td>
+          <td class="signal">wlw AB→AB2% = 6.0%（ep 为 26.7%），alibaba 回复率最低</td>
+          <td class="action">验证 wlw Alibaba 回复率与供给质量</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-ok">✅</span></td>
+          <td class="signal">ep Organic Search UV -12.8%，周六正常回落</td>
+          <td class="action">持续观察</td>
+        </tr>
+        <tr style="background:#f0fdf4;">
+          <td><span class="badge badge-ok">✅</span></td>
+          <td class="signal">ep QDR AB +5.4%（web +14.3%, alibaba +28.9% 对冲 app -12.6%）</td>
+          <td class="action">无需行动</td>
+        </tr>
+        <tr style="background:#f0fdf4;">
+          <td><span class="badge badge-ok">✅</span></td>
+          <td class="signal">ep RFQ AB +2.7%（web +31%, app +18%），alibaba -8.3% 小幅拖累</td>
+          <td class="action">持续观察</td>
+        </tr>
+        <tr style="background:#f0fdf4;">
+          <td><span class="badge badge-ok">✅</span></td>
+          <td class="signal">ep AB2 +50.8%（AB→AB2% 18.1%→26.7%）</td>
+          <td class="action">复用 Alibaba 改善经验到 wlw</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-    <div class="footer">
-      <div>数据来源：Redash → Redshift（ga_user_metrics · active_buyers · app_user_lt_retention）</div>
-      <div>口径：Web UV = COUNT(DISTINCT visitor_sk)<span>|</span>App UV = total_dau<span>|</span>AB = active_buyers<span>|</span>AB2 = is_ab2 = true<span>|</span>WoW = 对比上周同日</div>
-      <div>生成工具：UG Daily Dashboard · Cursor Agent</div>
-    </div>
+  <div class="footer">
+    <div>数据来源：Redash → Redshift（ga_user_metrics · fact_direct_requests · fact_rfq_requests · active_buyers · app_user_lt_retention）</div>
+    <div>口径：Web UV = COUNT(DISTINCT visitor_sk)<span>|</span>App UV = total_dau<span>|</span>AB = active_buyers<span>|</span>AB2 = is_ab2 = true<span>|</span>Others = 低频渠道 + 未识别项<span>|</span>WoW = 对比上周同日</div>
+    <div>生成工具：UG Daily Report · Cursor Agent</div>
   </div>
 </div>
 
 <script>
-/* ===================================================================
-   State
-   =================================================================== */
-let activeCharts = [];
+const labels = ["03/22","03/23","03/24","03/25","03/26","03/27","03/28","03/29","03/30","03/31","04/01","04/02","04/03","04/04"];
 
-/* ===================================================================
-   Helpers
-   =================================================================== */
-const $ = (sel) => document.querySelector(sel);
-const fmtNum = (n) => (n == null ? "—" : Number(n).toLocaleString());
-function wowPct(curr, prev) {
-  if (prev == null || prev < 5) return "—";
-  const p = ((curr - prev) / prev * 100).toFixed(1);
-  return Number(p) > 0 ? `+${p}%` : `${p}%`;
+const epUV = [18073,31807,32149,32091,31606,28027,17956,18044,32261,31328,29651,28148,22906,15901];
+const wlwUV = [19055,31158,30389,31114,30201,25729,17338,19049,29522,27873,24577,23006,17507,13406];
+const totalUV = epUV.map((v,i) => v + wlwUV[i]);
+
+const epAB2 = [60,256,183,183,208,145,61,69,212,210,194,180,143,92];
+const wlwAB2 = [9,58,37,36,44,40,7,5,40,25,41,28,14,7];
+const totalAB2 = epAB2.map((v,i) => v + wlwAB2[i]);
+
+const epQDR = [198,435,367,369,386,298,205,205,364,400,331,312,277,216];
+const wlwQDR = [81,238,226,237,256,187,90,88,228,157,186,154,78,63];
+const totalQDR = epQDR.map((v,i) => v + wlwQDR[i]);
+
+const epRFQ = [153,367,306,281,329,234,146,180,301,320,314,251,226,150];
+const wlwRFQ = [62,146,120,130,123,90,67,70,122,97,109,107,65,56];
+const totalRFQ = epRFQ.map((v,i) => v + wlwRFQ[i]);
+
+const epApp = [1082,1475,1685,1773,2523,2298,2877,2938,1495,1327,1052,1188,971,829];
+const wlwApp = [322,387,487,626,641,713,903,852,413,334,233,256,244,154];
+const totalApp = epApp.map((v,i) => v + wlwApp[i]);
+
+// Real t-7 series from 2026-03-15 ~ 2026-03-28.
+const epUVT7 = [17935,31710,31395,30562,28742,26113,16940,18073,31807,32149,32091,31606,28027,17956];
+const wlwUVT7 = [20462,33310,32784,31718,30219,26309,16554,19055,31158,30389,31114,30201,25729,17338];
+const totalUVT7 = epUVT7.map((v,i) => v + wlwUVT7[i]);
+
+const epAB2T7 = [73,203,187,179,163,134,55,60,256,183,183,208,145,61];
+const wlwAB2T7 = [8,56,50,41,34,27,7,9,58,37,36,44,40,7];
+const totalAB2T7 = epAB2T7.map((v,i) => v + wlwAB2T7[i]);
+
+const epQDRT7 = [273,415,353,344,306,248,200,198,435,367,369,386,298,205];
+const wlwQDRT7 = [92,219,214,248,224,156,77,81,238,226,237,256,187,90];
+const totalQDRT7 = epQDRT7.map((v,i) => v + wlwQDRT7[i]);
+
+const epAppT7 = [850,930,983,949,1312,1064,1002,1082,1475,1685,1773,2523,2298,2877];
+const wlwAppT7 = [167,223,253,223,293,354,259,322,387,487,626,641,713,903];
+const totalAppT7 = epAppT7.map((v,i) => v + wlwAppT7[i]);
+
+const epRFQT7 = [186,281,295,296,297,223,123,153,367,306,281,329,234,146];
+const wlwRFQT7 = [84,145,159,113,126,81,46,62,146,120,130,123,90,67];
+const totalRFQT7 = epRFQT7.map((v,i) => v + wlwRFQT7[i]);
+
+const uvWebTotals = [
+  ['ep', 'PC', 4646, 5385],
+  ['ep', 'WAP', 11252, 12573],
+  ['ep', '(unknown)', 4, 0],
+  ['wlw', 'PC', 3423, 4545],
+  ['wlw', 'WAP', 9983, 12794],
+  ['wlw', '(unknown)', 1, 1],
+];
+
+const uvWebRows = [
+  ['ep', '(unknown)', 'organic_search', 3, 0],
+  ['ep', '(unknown)', 'direct', 1, 0],
+  ['ep', 'PC', 'organic_search', 2868, 3426],
+  ['ep', 'PC', 'direct', 1219, 1299],
+  ['ep', 'PC', 'referral', 231, 289],
+  ['ep', 'PC', 'geo', 145, 173],
+  ['ep', 'PC', 'email', 119, 130],
+  ['ep', 'PC', 'display_performance', 92, 99],
+  ['ep', 'PC', 'Others', 9, 14],
+  ['ep', 'WAP', 'organic_search', 9514, 10774],
+  ['ep', 'WAP', 'direct', 1195, 1245],
+  ['ep', 'WAP', 'geo', 298, 318],
+  ['ep', 'WAP', 'referral', 136, 113],
+  ['ep', 'WAP', 'email', 78, 76],
+  ['ep', 'WAP', 'display_performance', 46, 45],
+  ['ep', 'WAP', 'Others', 29, 39],
+  ['wlw', '(unknown)', 'organic_search', 1, 1],
+  ['wlw', 'PC', 'organic_search', 2596, 3404],
+  ['wlw', 'PC', 'direct', 422, 504],
+  ['wlw', 'PC', 'paid_search', 154, 297],
+  ['wlw', 'PC', 'referral', 134, 205],
+  ['wlw', 'PC', 'email', 57, 66],
+  ['wlw', 'PC', 'geo', 46, 44],
+  ['wlw', 'PC', 'Others', 27, 39],
+  ['wlw', 'WAP', 'organic_search', 8766, 11007],
+  ['wlw', 'WAP', 'direct', 788, 979],
+  ['wlw', 'WAP', 'paid_search', 249, 628],
+  ['wlw', 'WAP', 'geo', 110, 123],
+  ['wlw', 'WAP', 'referral', 44, 50],
+  ['wlw', 'WAP', 'email', 29, 19],
+  ['wlw', 'WAP', 'Others', 11, 13],
+];
+
+const uvAppTotals = [
+  ['ep', 836, 2877],
+  ['wlw', 155, 903],
+];
+
+const abWebTotals = [
+  ['ep', false, '(unknown)', 69, 43],
+  ['ep', false, 'PC', 19, 38],
+  ['ep', false, 'WAP', 17, 18],
+  ['ep', true, '(unknown)', 17, 11],
+  ['ep', true, 'PC', 13, 5],
+  ['ep', true, 'WAP', 9, 7],
+  ['wlw', false, '(unknown)', 24, 14],
+  ['wlw', false, 'PC', 3, 18],
+  ['wlw', false, 'WAP', 13, 25],
+  ['wlw', true, '(unknown)', 2, 0],
+  ['wlw', true, 'PC', 0, 2],
+  ['wlw', true, 'WAP', 0, 1],
+];
+
+const abWebRows = [
+  ['ep', '(unknown)', false, '(unknown)', 69, 43],
+  ['ep', 'PC', false, 'direct', 10, 14],
+  ['ep', 'PC', false, 'organic_search', 6, 13],
+  ['ep', 'PC', false, 'referral', 2, 6],
+  ['ep', 'PC', false, 'geo', 1, 3],
+  ['ep', 'PC', false, 'email', 1, 1],
+  ['ep', 'PC', false, 'Others', 0, 1],
+  ['ep', 'WAP', false, 'organic_search', 12, 10],
+  ['ep', 'WAP', false, 'referral', 2, 0],
+  ['ep', 'WAP', false, 'geo', 2, 2],
+  ['ep', 'WAP', false, 'direct', 1, 6],
+  ['ep', '(unknown)', true, '(unknown)', 17, 11],
+  ['ep', 'PC', true, 'organic_search', 8, 2],
+  ['ep', 'PC', true, 'direct', 4, 0],
+  ['ep', 'PC', true, 'geo', 1, 0],
+  ['ep', 'PC', true, 'display_performance', 0, 1],
+  ['ep', 'PC', true, 'email', 0, 2],
+  ['ep', 'WAP', true, 'organic_search', 7, 5],
+  ['ep', 'WAP', true, 'geo', 2, 0],
+  ['ep', 'WAP', true, 'referral', 0, 1],
+  ['ep', 'WAP', true, 'direct', 0, 1],
+  ['wlw', '(unknown)', false, '(unknown)', 24, 14],
+  ['wlw', 'PC', false, 'organic_search', 2, 10],
+  ['wlw', 'PC', false, 'direct', 1, 4],
+  ['wlw', 'PC', false, 'paid_search', 0, 3],
+  ['wlw', 'PC', false, 'email', 0, 1],
+  ['wlw', 'WAP', false, 'organic_search', 6, 19],
+  ['wlw', 'WAP', false, 'geo', 3, 0],
+  ['wlw', 'WAP', false, 'paid_search', 3, 5],
+  ['wlw', 'WAP', false, 'direct', 1, 1],
+  ['wlw', '(unknown)', true, '(unknown)', 2, 0],
+  ['wlw', 'PC', true, 'paid_search', 0, 2],
+  ['wlw', 'WAP', true, 'organic_search', 0, 1],
+];
+
+const abSourceTotals = [
+  ['ep', 'app', false, 72, 87],
+  ['ep', 'app', true, 31, 27],
+  ['ep', 'alibaba', false, 119, 125],
+  ['ep', 'alibaba', true, 27, 12],
+  ['wlw', 'app', false, 6, 12],
+  ['wlw', 'app', true, 1, 4],
+  ['wlw', 'alibaba', false, 69, 82],
+  ['wlw', 'alibaba', true, 4, 0],
+];
+
+function hexToRgba(hex, alpha) {
+  const clean = hex.replace('#', '');
+  const normalized = clean.length === 3
+    ? clean.split('').map((c) => c + c).join('')
+    : clean;
+  const value = parseInt(normalized, 16);
+  const r = (value >> 16) & 255;
+  const g = (value >> 8) & 255;
+  const b = value & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
-function wowDir(curr, prev) {
-  if (prev == null || prev < 5) return "neutral";
-  return curr > prev ? "up" : curr < prev ? "down" : "neutral";
-}
-function ppChange(curr, prev) {
-  if (curr == null || prev == null) return "—";
-  const diff = (curr - prev).toFixed(1);
-  return Number(diff) > 0 ? `+${diff}pp` : `${diff}pp`;
-}
 
-/* ===================================================================
-   Date Picker
-   =================================================================== */
-async function init() {
-  try {
-    const resp = await fetch("data/manifest.json");
-    if (!resp.ok) throw new Error("manifest not found");
-    const manifest = await resp.json();
-    if (!manifest.length) { showEmpty(); return; }
-
-    const picker = $("#datePicker");
-    picker.innerHTML = manifest.map(d => `<option value="${d}">${d}</option>`).join("");
-    picker.disabled = false;
-    picker.addEventListener("change", () => loadDate(picker.value));
-
-    await loadDate(manifest[0]);
-  } catch {
-    showEmpty();
-  }
+function currentLine(color) {
+  return {
+    borderColor: color,
+    borderWidth: 2.6,
+    tension: 0.3,
+    pointRadius: 2.5,
+    pointHoverRadius: 4,
+    fill: false,
+  };
 }
 
-function showEmpty() {
-  $("#loading").style.display = "none";
-  $("#empty-state").style.display = "block";
+function compareLine(color) {
+  return {
+    borderColor: hexToRgba(color, 0.58),
+    borderDash: [6, 4],
+    borderWidth: 1.5,
+    tension: 0.3,
+    pointRadius: 0,
+    pointHoverRadius: 0,
+    fill: '-1',
+    backgroundColor: hexToRgba(color, 0.10),
+  };
 }
 
-async function loadDate(date) {
-  $("#loading").style.display = "block";
-  $("#main-content").style.display = "none";
-  try {
-    const resp = await fetch(`data/${date}.json`);
-    if (!resp.ok) throw new Error("data not found");
-    const data = await resp.json();
-    render(data);
-    $("#loading").style.display = "none";
-    $("#main-content").style.display = "block";
-  } catch (e) {
-    $("#loading").innerHTML = `<span style="color:#dc2626;">加载失败：${e.message}</span>`;
-  }
+function formatNumber(value) {
+  return value == null ? '—' : Number(value).toLocaleString('en-US');
 }
 
-/* ===================================================================
-   Render: Header
-   =================================================================== */
-function render(data) {
-  const m = data.meta;
-  const dayNames = ["周日","周一","周二","周三","周四","周五","周六"];
-  const td = new Date(m.date + "T00:00:00");
-  const wd = new Date(m.wow_date + "T00:00:00");
-  const dayName = dayNames[td.getDay()];
-  const wdName = dayNames[wd.getDay()];
-
-  $("#subtitle").textContent =
-    `${m.date}（${dayName}）| 对比基准：${m.wow_date}（上${wdName}）| 数据延迟 ~${m.latency_days} 天 | 生成：${m.generated_at.slice(0, 16).replace("T", " ")}`;
-
-  renderDAB2(data.summary);
-  renderSummary(data.summary);
-  renderVerdict(data.summary);
-  renderCharts(data.trends);
-  renderUVDrill(data.drilldown);
-  renderABDrill(data.summary, data.drilldown);
-  renderAB2Drill(data.summary, data.drilldown);
-  renderAnomalies(data.anomalies);
+function calcWow(curr, prev) {
+  if (prev == null || prev === 0) return null;
+  return ((curr - prev) / prev) * 100;
 }
 
-/* ===================================================================
-   Render: D-AB2 Progress
-   =================================================================== */
-function renderDAB2(summary) {
-  const d = summary.d_ab2;
-  const pctDone = Math.min(100, Math.round((d.total / d.target) * 100));
-  const barClass = pctDone < 30 ? "low" : pctDone < 70 ? "mid" : "high";
+function wowText(curr, prev) {
+  const pct = calcWow(curr, prev);
+  if (pct == null || Number.isNaN(pct)) return '—';
+  const rounded = pct.toFixed(1);
+  return `${pct > 0 ? '+' : ''}${rounded}%`;
+}
 
-  const prevTotal = (summary.ep.ab2_prev || 0) + (summary.wlw.ab2_prev || 0);
-  const totalWow = wowPct(d.total, prevTotal);
-  const totalDir = wowDir(d.total, prevTotal);
+function wowClass(curr, prev) {
+  const pct = calcWow(curr, prev);
+  if (pct == null || Number.isNaN(pct)) return 'neutral';
+  if (pct > 0) return 'up';
+  if (pct < 0) return 'down';
+  return 'neutral';
+}
 
-  $("#dab2-section").innerHTML = `
+function renderDAB2Progress() {
+  const TARGET = 500;
+  const currTotal = totalAB2[totalAB2.length - 1];
+  const prevTotal = totalAB2T7[totalAB2T7.length - 1];
+  const currEp = epAB2[epAB2.length - 1];
+  const currWlw = wlwAB2[wlwAB2.length - 1];
+  const pct = Math.min(Math.round(currTotal / TARGET * 100), 100);
+  const fillClass = pct < 40 ? 'low' : pct < 70 ? 'mid' : 'high';
+  const wow = wowText(currTotal, prevTotal);
+  const el = document.getElementById('dab2-section');
+  if (!el) return;
+  el.innerHTML = `
     <div class="dab2-header">
-      <div class="dab2-title">D-AB2 目标追踪</div>
-      <div class="dab2-value">${fmtNum(d.total)} <span class="target">/ ${fmtNum(d.target)}</span>
-        <span class="change ${totalDir}" style="font-size:14px; margin-left:8px;">${totalWow}</span>
-      </div>
+      <span class="dab2-title">D-AB2 Target Tracking</span>
+      <span class="dab2-value">${currTotal} <span class="target">/ ${TARGET}</span></span>
     </div>
     <div class="progress-track">
-      <div class="progress-fill ${barClass}" style="width:${pctDone}%"></div>
+      <div class="progress-fill ${fillClass}" style="width:${pct}%"></div>
     </div>
     <div class="dab2-detail">
-      <span>ep: <strong>${fmtNum(d.ep)}</strong></span>
-      <span>wlw: <strong>${fmtNum(d.wlw)}</strong></span>
-      <span>完成度: <strong>${pctDone}%</strong></span>
-      <span>缺口: <strong>${d.gap_pct > 0 ? d.gap_pct + "%" : "已达标"}</strong></span>
+      <span>达成率 ${pct}%</span>
+      <span>ep ${currEp} · wlw ${currWlw}</span>
+      <span>WoW ${wow}</span>
     </div>`;
 }
 
-/* ===================================================================
-   Render: Core Verdict (auto-generated)
-   =================================================================== */
-function renderVerdict(summary) {
-  const tot = {};
-  for (const k of ["web_uv","app_uv","ab","ab2"]) {
-    tot[k] = (summary.ep[k] || 0) + (summary.wlw[k] || 0);
-    tot[k + "_prev"] = (summary.ep[k + "_prev"] || 0) + (summary.wlw[k + "_prev"] || 0);
-  }
-  function desc(name, curr, prev) {
-    if (prev < 5) return `${name} 数据不足`;
-    const p = ((curr - prev) / prev * 100).toFixed(1);
-    if (p > 5) return `${name} 涨 +${p}%`;
-    if (p < -5) return `${name} 降 ${p}%`;
-    return `${name} 持平`;
-  }
-  const parts = [
-    desc("Web UV", tot.web_uv, tot.web_uv_prev),
-    desc("AB", tot.ab, tot.ab_prev),
-    desc("AB2", tot.ab2, tot.ab2_prev),
-  ];
-  $("#core-verdict").textContent = parts.join(" → ");
+function renderTrendMeta(targetId, items) {
+  const target = document.getElementById(targetId);
+  if (!target) return;
+  target.innerHTML = items.map((item, index) => `
+    <div class="metric ${index === 0 ? 'primary' : ''}">
+      <span class="name">${item.name}</span>
+      <span class="value">${formatNumber(item.current)}</span>
+      <span class="wow ${wowClass(item.current, item.prev)}">（WoW ${wowText(item.current, item.prev)}）</span>
+    </div>
+  `).join('');
 }
 
-/* ===================================================================
-   Render: Summary Cards
-   =================================================================== */
-function renderSummary(summary) {
-  const ep = summary.ep, wlw = summary.wlw;
-  function total(k) { return (ep[k] || 0) + (wlw[k] || 0); }
-  function totalPrev(k) { return (ep[k + "_prev"] || 0) + (wlw[k + "_prev"] || 0); }
-
-  const ab2Rate = summary.ab_to_ab2_pct;
-  const totalAb2RateCurr = total("ab") > 0 ? (total("ab2") / total("ab") * 100).toFixed(1) : "—";
-  const totalAb2RatePrev = totalPrev("ab") > 0 ? (totalPrev("ab2") / totalPrev("ab") * 100).toFixed(1) : "—";
-
-  function card(label, curr, prev) {
-    return `<div class="summary-item">
-      <div class="label">${label}</div>
-      <div class="value">${fmtNum(curr)}</div>
-      <div class="change ${wowDir(curr, prev)}">WoW ${wowPct(curr, prev)}</div>
-    </div>`;
-  }
-
-  const qdrCurr = total("qdr_ab"), qdrPrev = totalPrev("qdr_ab");
-  const rfqCurr = total("rfq_ab"), rfqPrev = totalPrev("rfq_ab");
-
-  const abSplitCard = `<div class="summary-item">
-    <div class="label">AB 拆分（人头）</div>
-    <div class="split-row">
-      <div class="split-col">
-        <div class="split-label">QDR</div>
-        <div class="split-value">${fmtNum(qdrCurr)}</div>
-        <div class="change ${wowDir(qdrCurr, qdrPrev)}" style="font-size:12px;">${wowPct(qdrCurr, qdrPrev)}</div>
-      </div>
-      <div class="split-col">
-        <div class="split-label">RFQ</div>
-        <div class="split-value">${fmtNum(rfqCurr)}</div>
-        <div class="change ${wowDir(rfqCurr, rfqPrev)}" style="font-size:12px;">${wowPct(rfqCurr, rfqPrev)}</div>
-      </div>
-    </div>
-  </div>`;
-
-  const ab2Curr = total("ab2"), ab2Prev = totalPrev("ab2");
-  const ab2Card = `<div class="summary-item">
-    <div class="label">AB2（全口径）</div>
-    <div class="value" style="color:${ab2Curr >= ab2Prev ? "#16a34a" : "#dc2626"};">${fmtNum(ab2Curr)}</div>
-    <div class="change ${wowDir(ab2Curr, ab2Prev)}">WoW ${wowPct(ab2Curr, ab2Prev)}</div>
-    <div class="sub-metric">AB→AB2%: ${totalAb2RateCurr}%
-      <span class="${Number(totalAb2RateCurr) >= Number(totalAb2RatePrev) ? "up" : "down"}">(${ppChange(Number(totalAb2RateCurr), Number(totalAb2RatePrev))})</span>
-    </div>
-  </div>`;
-
-  $("#summary-grid").innerHTML = [
-    card("Web UV", total("web_uv"), totalPrev("web_uv")),
-    card("App UV", total("app_uv"), totalPrev("app_uv")),
-    card("AB（全口径）", total("ab"), totalPrev("ab")),
-    abSplitCard,
-    ab2Card,
-  ].join("");
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
 }
 
-/* ===================================================================
-   Render: Charts
-   =================================================================== */
-const EP_COLOR = "#3b82f6";
-const WLW_COLOR = "#f59e0b";
-const TOTAL_COLOR = "#1e293b";
-const CHART_OPTS = {
+function channelLabel(value) {
+  const map = {
+    organic_search: 'Organic Search',
+    direct: 'Direct',
+    paid_search: 'Paid Search',
+    referral: 'Referral',
+    email: 'Email',
+    geo: 'Geo',
+    display_performance: 'Display',
+    organic_social: 'Organic Social',
+    affiliate: 'Affiliate',
+    organic_video: 'Organic Video',
+    display_brand: 'Display Brand',
+    other: 'Other',
+    Others: 'Others',
+    '(unknown)': 'Others',
+  };
+  return map[value] || value;
+}
+
+function endpointLabel(value) {
+  return value === '(unknown)' ? 'Others' : value;
+}
+
+function normalizeBucket(value) {
+  return value === '(unknown)' ? 'Others' : value;
+}
+
+function aggregateRows(rows) {
+  const map = new Map();
+  for (const row of rows) {
+    const endpointIsUnknown = row.endpoint === '(unknown)';
+    const endpoint = endpointIsUnknown ? 'Others' : normalizeBucket(row.endpoint);
+    const channel = endpointIsUnknown ? 'Others' : normalizeBucket(row.channel);
+    const key = `${endpoint}__${channel}`;
+    const existing = map.get(key) || { endpoint, channel, current: 0, prev: 0 };
+    existing.current += row.current;
+    existing.prev += row.prev;
+    map.set(key, existing);
+  }
+  return [...map.values()];
+}
+
+function getWebRows(metricKey, platform) {
+  if (metricKey === 'uv') {
+    return aggregateRows(uvWebRows
+      .filter((row) => row[0] === platform)
+      .map((row) => ({
+        endpoint: row[1],
+        channel: row[2],
+        current: row[3],
+        prev: row[4],
+      })));
+  }
+
+  const isAb2 = metricKey === 'ab2';
+  return aggregateRows(abWebRows
+    .filter((row) => row[0] === platform && row[2] === isAb2)
+    .map((row) => ({
+      endpoint: row[1],
+      channel: row[3],
+      current: row[4],
+      prev: row[5],
+    })));
+}
+
+function getEndpointTotals(metricKey, platform) {
+  const rows = getWebRows(metricKey, platform);
+  const map = new Map();
+  for (const row of rows) {
+    const existing = map.get(row.endpoint) || { endpoint: row.endpoint, current: 0, prev: 0 };
+    existing.current += row.current;
+    existing.prev += row.prev;
+    map.set(row.endpoint, existing);
+  }
+  return [...map.values()];
+}
+
+function getSourceRows(metricKey, platform) {
+  if (metricKey === 'uv') {
+    const row = uvAppTotals.find((item) => item[0] === platform);
+    return row ? [{ label: 'App', current: row[1], prev: row[2] }] : [];
+  }
+
+  const isAb2 = metricKey === 'ab2';
+  const app = abSourceTotals.find((row) => row[0] === platform && row[1] === 'app' && row[2] === isAb2);
+  const alibaba = abSourceTotals.find((row) => row[0] === platform && row[1] === 'alibaba' && row[2] === isAb2);
+  return [
+    app ? { label: 'App', current: app[3], prev: app[4] } : null,
+    alibaba ? { label: 'Alibaba', current: alibaba[3], prev: alibaba[4] } : null,
+  ].filter(Boolean);
+}
+
+function sumRows(rows) {
+  return rows.reduce((acc, row) => {
+    acc.current += row.current;
+    acc.prev += row.prev;
+    return acc;
+  }, { current: 0, prev: 0 });
+}
+
+function buildBadge(label, current, prev, primary = false) {
+  return `
+    <div class="metric-badge ${primary ? 'primary' : ''}">
+      <span class="k">${escapeHtml(label)}</span>
+      <span class="v">${formatNumber(current)}</span>
+      <span class="d ${wowClass(current, prev)}">（WoW ${wowText(current, prev)}）</span>
+    </div>
+  `;
+}
+
+function buildEndpointCard(title, rows, total, wide = false) {
+  const sorted = rows.slice().sort((a, b) => b.current - a.current);
+  const body = sorted.map((row) => `
+    <tr>
+      <td>${escapeHtml(channelLabel(row.channel))}</td>
+      <td class="num">${formatNumber(row.current)}</td>
+      <td class="num">${formatNumber(row.prev)}</td>
+      <td class="num ${wowClass(row.current, row.prev)}">${wowText(row.current, row.prev)}</td>
+    </tr>
+  `).join('');
+
+  return `
+    <div class="endpoint-card ${wide ? 'wide' : ''}">
+      <h4>${escapeHtml(title)} <span style="font-weight:500; color:#64748b; font-size:11px;">总量 ${formatNumber(total.current)}（WoW ${wowText(total.current, total.prev)}）</span></h4>
+      <table class="mini-table">
+        <thead>
+          <tr><th>渠道</th><th class="num">当前</th><th class="num">上周</th><th class="num">WoW</th></tr>
+        </thead>
+        <tbody>
+          ${body}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderPlatformPanel(platform, metricKey) {
+  const webRows = getWebRows(metricKey, platform);
+  const totals = getEndpointTotals(metricKey, platform);
+  const webTotal = sumRows(totals);
+  const sources = getSourceRows(metricKey, platform);
+  const totalBadges = [
+    buildBadge('Web', webTotal.current, webTotal.prev, true),
+    ...sources.map((item) => buildBadge(item.label, item.current, item.prev)),
+  ].join('');
+
+  const endpointOrder = ['PC', 'WAP', 'Others'];
+  const endpointCards = endpointOrder.map((endpoint) => {
+    const rows = webRows.filter((row) => row.endpoint === endpoint);
+    const total = totals.find((item) => item.endpoint === endpoint);
+    if (!rows.length || !total) return '';
+    return buildEndpointCard(endpointLabel(endpoint), rows, total, endpoint === 'Others');
+  }).join('');
+
+  return `
+    <div class="metric-panel">
+      <h3>${escapeHtml(platform)}</h3>
+      <div class="metric-badges">${totalBadges}</div>
+      <div class="endpoint-grid">${endpointCards}</div>
+    </div>
+  `;
+}
+
+function renderDrillSection(targetId, metricKey) {
+  const target = document.getElementById(targetId);
+  if (!target) return;
+  target.innerHTML = `
+    <div class="drill-layout">
+      ${['ep', 'wlw'].map((platform) => renderPlatformPanel(platform, metricKey)).join('')}
+    </div>
+  `;
+}
+
+const commonOptions = {
   responsive: true, maintainAspectRatio: false,
-  interaction: { mode: "index", intersect: false },
-  plugins: { legend: { position: "top", labels: { font: { size: 11 } } } },
+  interaction: { mode: 'index', intersect: false },
+  plugins: {
+    legend: {
+      position: 'top',
+      labels: {
+        font: { size: 11 },
+        filter: (item) => !item.text.endsWith(' t-7')
+      }
+    }
+  },
   scales: {
     x: { grid: { display: false }, ticks: { font: { size: 10 } } },
-    y: { beginAtZero: false, ticks: { font: { size: 10 } } },
-  },
+    y: { beginAtZero: false, ticks: { font: { size: 10 } } }
+  }
 };
 
-function makeDatasets(epArr, wlwArr) {
-  const total = epArr.map((v, i) => v + wlwArr[i]);
-  return [
-    { label: "全站", data: total, borderColor: TOTAL_COLOR, borderWidth: 2.5, tension: 0.3, pointRadius: 3 },
-    { label: "ep", data: epArr, borderColor: EP_COLOR, borderDash: [4,4], borderWidth: 1.5, tension: 0.3, pointRadius: 2 },
-    { label: "wlw", data: wlwArr, borderColor: WLW_COLOR, borderDash: [4,4], borderWidth: 1.5, tension: 0.3, pointRadius: 2 },
-  ];
-}
-
-function renderCharts(trends) {
-  activeCharts.forEach((c) => c.destroy());
-  activeCharts = [];
-
-  const ids = ["uvChart","appChart","qdrChart","rfqChart","ab2Chart"];
-  ids.forEach((id) => {
-    const canvas = document.getElementById(id);
-    const parent = canvas.parentNode;
-    const w = canvas.width, h = canvas.height;
-    canvas.remove();
-    const newCanvas = document.createElement("canvas");
-    newCanvas.id = id;
-    parent.appendChild(newCanvas);
+function makeChart(id, datasets, opts = {}) {
+  new Chart(document.getElementById(id), {
+    type: 'line',
+    data: { labels, datasets },
+    options: { ...commonOptions, ...opts }
   });
-
-  function mk(id, ep, wlw) {
-    const c = new Chart(document.getElementById(id), {
-      type: "line",
-      data: { labels: trends.labels, datasets: makeDatasets(ep, wlw) },
-      options: CHART_OPTS,
-    });
-    activeCharts.push(c);
-  }
-
-  mk("uvChart", trends.ep_uv, trends.wlw_uv);
-  mk("appChart", trends.ep_app, trends.wlw_app);
-  mk("qdrChart", trends.ep_qdr, trends.wlw_qdr);
-  mk("rfqChart", trends.ep_rfq, trends.wlw_rfq);
-  mk("ab2Chart", trends.ep_ab2, trends.wlw_ab2);
 }
 
-/* ===================================================================
-   Render: UV Drilldown Tables
-   =================================================================== */
-function buildChannelTable(rows) {
-  if (!rows || !rows.length) return "<p style='color:#94a3b8;'>无数据</p>";
-  let totalCurr = 0, totalPrev = 0;
-  rows.forEach((r) => { totalCurr += r.current; totalPrev += r.prev; });
+const epColor = '#3b82f6';
+const wlwColor = '#f59e0b';
+const totalColor = '#1e293b';
 
-  let html = `<table><thead><tr><th>渠道</th><th class="num">本期</th><th class="num">上期</th><th class="num">WoW</th></tr></thead><tbody>`;
-  for (const r of rows) {
-    const dir = wowDir(r.current, r.prev);
-    const cls = r.wow_pct != null && r.wow_pct <= -20 ? ' class="highlight-down"' : r.wow_pct != null && r.wow_pct >= 20 ? ' class="highlight-up"' : "";
-    html += `<tr${cls}><td>${r.channel}</td><td class="num">${fmtNum(r.current)}</td><td class="num">${fmtNum(r.prev)}</td><td class="num ${dir}">${wowPct(r.current, r.prev)}</td></tr>`;
-  }
-  html += `<tr class="subtotal"><td>合计</td><td class="num">${fmtNum(totalCurr)}</td><td class="num">${fmtNum(totalPrev)}</td><td class="num ${wowDir(totalCurr, totalPrev)}">${wowPct(totalCurr, totalPrev)}</td></tr>`;
-  html += `</tbody></table>`;
-  return html;
-}
+renderDAB2Progress();
 
-function renderUVDrill(drilldown) {
-  $("#ep-uv-table").innerHTML = buildChannelTable(drilldown.ep_uv_by_channel);
-  $("#wlw-uv-table").innerHTML = buildChannelTable(drilldown.wlw_uv_by_channel);
-}
+renderTrendMeta('uvMeta', [
+  { name: '总', current: totalUV[13], prev: totalUVT7[13] },
+  { name: 'ep', current: epUV[13], prev: epUVT7[13] },
+  { name: 'wlw', current: wlwUV[13], prev: wlwUVT7[13] },
+]);
 
-/* ===================================================================
-   Render: AB Drilldown Tables
-   =================================================================== */
-function buildSourceTable(rows, showAb2) {
-  if (!rows || !rows.length) return "<p style='color:#94a3b8;'>无数据</p>";
-  const ab2Header = showAb2 ? "<th class='num'>AB2 本期</th><th class='num'>AB2 上期</th>" : "";
+renderTrendMeta('appMeta', [
+  { name: '总', current: totalApp[13], prev: totalAppT7[13] },
+  { name: 'ep', current: epApp[13], prev: epAppT7[13] },
+  { name: 'wlw', current: wlwApp[13], prev: wlwAppT7[13] },
+]);
 
-  let html = `<table><thead><tr><th>Platform</th><th>Source</th><th class="num">本期</th><th class="num">上期</th><th class="num">WoW</th>${ab2Header}</tr></thead><tbody>`;
-  for (const r of rows) {
-    const dir = wowDir(r.current, r.prev);
-    const cls = r.wow_pct != null && r.wow_pct <= -20 ? ' class="highlight-down"' : r.wow_pct != null && r.wow_pct >= 20 ? ' class="highlight-up"' : "";
-    const ab2Cells = showAb2 ? `<td class="num">${fmtNum(r.ab2_current)}</td><td class="num">${fmtNum(r.ab2_prev)}</td>` : "";
-    html += `<tr${cls}><td>${r.platform}</td><td>${r.source}</td><td class="num">${fmtNum(r.current)}</td><td class="num">${fmtNum(r.prev)}</td><td class="num ${dir}">${wowPct(r.current, r.prev)}</td>${ab2Cells}</tr>`;
-  }
-  html += `</tbody></table>`;
-  return html;
-}
+renderTrendMeta('qdrMeta', [
+  { name: '总', current: totalQDR[13], prev: totalQDRT7[13] },
+  { name: 'ep', current: epQDR[13], prev: epQDRT7[13] },
+  { name: 'wlw', current: wlwQDR[13], prev: wlwQDRT7[13] },
+]);
 
-function renderABDrill(summary, drilldown) {
-  const ep = summary.ep, wlw = summary.wlw;
-  const qdrTotal = (ep.qdr_ab || 0) + (wlw.qdr_ab || 0);
-  const qdrPrev = (ep.qdr_ab_prev || 0) + (wlw.qdr_ab_prev || 0);
-  const rfqTotal = (ep.rfq_ab || 0) + (wlw.rfq_ab || 0);
-  const rfqPrev = (ep.rfq_ab_prev || 0) + (wlw.rfq_ab_prev || 0);
+renderTrendMeta('rfqMeta', [
+  { name: '总', current: totalRFQ[13], prev: totalRFQT7[13] },
+  { name: 'ep', current: epRFQ[13], prev: epRFQT7[13] },
+  { name: 'wlw', current: wlwRFQ[13], prev: wlwRFQT7[13] },
+]);
 
-  $("#qdr-ab-header").innerHTML = `QDR AB：${fmtNum(qdrTotal)}（WoW <span class="${wowDir(qdrTotal, qdrPrev)}">${wowPct(qdrTotal, qdrPrev)}</span>）`;
-  $("#qdr-ab-table").innerHTML = buildSourceTable(drilldown.qdr_ab_by_source, true);
+renderTrendMeta('ab2Meta', [
+  { name: '总', current: totalAB2[13], prev: totalAB2T7[13] },
+  { name: 'ep', current: epAB2[13], prev: epAB2T7[13] },
+  { name: 'wlw', current: wlwAB2[13], prev: wlwAB2T7[13] },
+]);
 
-  $("#rfq-ab-header").innerHTML = `RFQ AB：${fmtNum(rfqTotal)}（WoW <span class="${wowDir(rfqTotal, rfqPrev)}">${wowPct(rfqTotal, rfqPrev)}</span>）`;
-  $("#rfq-ab-table").innerHTML = buildSourceTable(drilldown.rfq_ab_by_source, true);
-}
+makeChart('uvChart', [
+  { label: '全站', data: totalUV, ...currentLine(totalColor) },
+  { label: '全站 t-7', data: totalUVT7, ...compareLine(totalColor) },
+  { label: 'ep', data: epUV, ...currentLine(epColor) },
+  { label: 'ep t-7', data: epUVT7, ...compareLine(epColor) },
+  { label: 'wlw', data: wlwUV, ...currentLine(wlwColor) },
+  { label: 'wlw t-7', data: wlwUVT7, ...compareLine(wlwColor) }
+]);
 
-/* ===================================================================
-   Render: AB2 Drilldown
-   =================================================================== */
-function renderAB2Drill(summary, drilldown) {
-  const ab2Total = summary.d_ab2.total;
-  const ab2Prev = (summary.ep.ab2_prev || 0) + (summary.wlw.ab2_prev || 0);
-  const wow = wowPct(ab2Total, ab2Prev);
-  const dir = wowDir(ab2Total, ab2Prev);
+makeChart('ab2Chart', [
+  { label: '全站', data: totalAB2, ...currentLine(totalColor) },
+  { label: '全站 t-7', data: totalAB2T7, ...compareLine(totalColor) },
+  { label: 'ep', data: epAB2, ...currentLine(epColor) },
+  { label: 'ep t-7', data: epAB2T7, ...compareLine(epColor) },
+  { label: 'wlw', data: wlwAB2, ...currentLine(wlwColor) },
+  { label: 'wlw t-7', data: wlwAB2T7, ...compareLine(wlwColor) }
+]);
 
-  $("#ab2-drill-summary").innerHTML = `AB2 合计：<strong>${fmtNum(ab2Total)}</strong>（WoW <span class="${dir}">${wow}</span>），D-AB2 距 500 目标缺口 ${summary.d_ab2.gap_pct > 0 ? summary.d_ab2.gap_pct + "%" : "已达标"}。`;
+makeChart('qdrChart', [
+  { label: '全站', data: totalQDR, ...currentLine(totalColor) },
+  { label: '全站 t-7', data: totalQDRT7, ...compareLine(totalColor) },
+  { label: 'ep', data: epQDR, ...currentLine(epColor) },
+  { label: 'ep t-7', data: epQDRT7, ...compareLine(epColor) },
+  { label: 'wlw', data: wlwQDR, ...currentLine(wlwColor) },
+  { label: 'wlw t-7', data: wlwQDRT7, ...compareLine(wlwColor) }
+]);
 
-  if (!drilldown.ab2_by_source || !drilldown.ab2_by_source.length) {
-    $("#ab2-table").innerHTML = "<p style='color:#94a3b8;'>无数据</p>";
-    return;
-  }
-  let html = `<table><thead><tr><th>Platform</th><th>Source</th><th class="num">本期</th><th class="num">上期</th><th class="num">WoW</th></tr></thead><tbody>`;
-  for (const r of drilldown.ab2_by_source) {
-    const d = wowDir(r.current, r.prev);
-    const cls = r.wow_pct != null && r.wow_pct <= -20 ? ' class="highlight-down"' : r.wow_pct != null && r.wow_pct >= 20 ? ' class="highlight-up"' : "";
-    html += `<tr${cls}><td>${r.platform}</td><td>${r.source}</td><td class="num">${fmtNum(r.current)}</td><td class="num">${fmtNum(r.prev)}</td><td class="num ${d}">${wowPct(r.current, r.prev)}</td></tr>`;
-  }
-  html += `</tbody></table>`;
-  $("#ab2-table").innerHTML = html;
-}
+makeChart('appChart', [
+  { label: '全站', data: totalApp, ...currentLine(totalColor) },
+  { label: '全站 t-7', data: totalAppT7, ...compareLine(totalColor) },
+  { label: 'ep', data: epApp, ...currentLine(epColor) },
+  { label: 'ep t-7', data: epAppT7, ...compareLine(epColor) },
+  { label: 'wlw', data: wlwApp, ...currentLine(wlwColor) },
+  { label: 'wlw t-7', data: wlwAppT7, ...compareLine(wlwColor) }
+]);
 
-/* ===================================================================
-   Render: Anomaly Table
-   =================================================================== */
-function renderAnomalies(anomalies) {
-  const body = $("#anomaly-body");
-  if (!anomalies || !anomalies.length) {
-    body.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8; padding:24px;">所有指标在正常范围内 ✅</td></tr>`;
-    return;
-  }
-  const icons = { P0: "❌", P1: "❌", P2: "⚠️", OK: "✅" };
-  body.innerHTML = anomalies.map((a) =>
-    `<tr><td><span class="badge badge-${a.level}">${icons[a.level] || ""} ${a.level}</span></td><td class="signal">${a.signal}</td><td class="action">${a.action}</td></tr>`
-  ).join("");
-}
+makeChart('rfqChart', [
+  { label: '全站', data: totalRFQ, ...currentLine(totalColor) },
+  { label: '全站 t-7', data: totalRFQT7, ...compareLine(totalColor) },
+  { label: 'ep', data: epRFQ, ...currentLine(epColor) },
+  { label: 'ep t-7', data: epRFQT7, ...compareLine(epColor) },
+  { label: 'wlw', data: wlwRFQ, ...currentLine(wlwColor) },
+  { label: 'wlw t-7', data: wlwRFQT7, ...compareLine(wlwColor) }
+]);
 
-/* ===================================================================
-   Init
-   =================================================================== */
-init();
+renderDrillSection('uv-drill', 'uv');
+renderDrillSection('ab-drill', 'ab');
+renderDrillSection('ab2-drill', 'ab2');
+
 </script>
 </body>
 </html>
