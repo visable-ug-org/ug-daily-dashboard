@@ -300,11 +300,11 @@ const DATA = {
     title: "2026-04-05（周日）",
     wowDate: "2026-03-29（上周日）",
     latency: 2,
-    genDate: "2026-04-07",
+    genDate: "2026-04-08",
     verdict: "周日全线回落。wlw AB/AB2 同步下滑，ep AB2 仍有韧性（72 vs prev 69，+4.3%）。",
     summary: {
       webUV: 29356, webUVPrev: 37093,
-      appUV: 984, appUVPrev: 3790,
+      appUV: 992, appUVPrev: 3790,
       ab: 438, abPrev: 524,
       qdrAB: 272, qdrABPrev: 293,
       rfqAB: 185, rfqABPrev: 250,
@@ -314,8 +314,8 @@ const DATA = {
       labels: ["03/23","03/24","03/25","03/26","03/27","03/28","03/29","03/30","03/31","04/01","04/02","04/03","04/04","04/05"],
       epUV: [31807,32149,32091,31606,28027,17956,18044,32261,31328,29651,28148,22906,15901,15375],
       wlwUV: [31158,30389,31114,30201,25729,17338,19049,29522,27873,24577,23006,17507,13406,13981],
-      epApp: [1475,1685,1773,2523,2298,2877,2938,1495,1327,1052,1188,972,836,840],
-      wlwApp: [387,487,626,641,713,903,852,413,334,233,256,244,155,144],
+      epApp: [1475,1685,1773,2523,2298,2877,2938,1495,1327,1052,1188,972,836,847],
+      wlwApp: [387,487,626,641,713,903,852,413,334,233,256,244,155,145],
       epQDR: [435,367,369,386,298,205,205,364,400,331,312,277,216,223],
       wlwQDR: [238,226,237,256,187,90,88,228,157,186,154,78,63,49],
       epRFQ: [367,306,281,329,234,146,180,301,320,314,251,226,150,136],
@@ -334,7 +334,23 @@ const DATA = {
       epAB2T7: [203,187,179,163,134,55,60,256,183,183,208,145,61,69],
       wlwAB2T7: [56,50,41,34,27,7,9,58,37,36,44,40,7,5]
     },
-    drill: null,
+    drill: {
+      uvWebTotals: [],
+      uvWebRows: [
+        ['ep','Others','direct',2147,2338],['ep','Others','display_performance',151,143],['ep','Others','email',174,184],['ep','Others','geo',454,585],['ep','Others','organic_search',11976,14266],['ep','Others','organic_social',19,29],['ep','Others','other',15,12],['ep','Others','paid_search',14,8],['ep','Others','referral',328,360],['ep','Others','(unknown)',97,113],
+        ['wlw','Others','affiliate',4,7],['wlw','Others','app',1,2],['wlw','Others','direct',1222,1635],['wlw','Others','display_performance',25,20],['wlw','Others','email',49,68],['wlw','Others','geo',158,182],['wlw','Others','organic_search',11694,15831],['wlw','Others','organic_social',3,0],['wlw','Others','other',12,20],['wlw','Others','paid_search',576,943],['wlw','Others','referral',183,255],['wlw','Others','(unknown)',54,86]
+      ],
+      uvAppTotals: [['ep',847,2938],['wlw',145,852]],
+      abWebTotals: [],
+      abWebRows: [
+        ['ep','Others',false,'Others',91,82],['ep','Others',true,'Others',35,25],
+        ['wlw','Others',false,'Others',33,66],['wlw','Others',true,'Others',3,2]
+      ],
+      abSourceTotals: [
+        ['ep','app',false,84,91],['ep','app',true,24,32],['ep','alibaba',false,127,151],['ep','alibaba',true,14,13],
+        ['wlw','app',false,5,8],['wlw','app',true,2,2],['wlw','alibaba',false,55,78],['wlw','alibaba',true,1,1]
+      ]
+    },
     anomalies: [
       {level:'P0', badge:'badge-p0', icon:'❌ P0', bg:'#fef2f2', signal:'ep App UV 暴跌 -71.4%（2938 → 840，Δ-2098）', action:'排查 App 推送策略与版本更新'},
       {level:'P0', badge:'badge-p0', icon:'❌ P0', bg:'#fef2f2', signal:'wlw App UV 暴跌 -83.1%（852 → 144，Δ-708）', action:'排查 App 推送策略与版本更新'},
@@ -346,6 +362,70 @@ const DATA = {
       {level:'P2', badge:'badge-p2', icon:'⚠️ P2', bg:'#fffbeb', signal:'ep Web UV 下降 -14.8%（18044 → 15375，Δ-2669）', action:'排查渠道变化，关注 Organic / Paid 分布'},
       {level:'OK', badge:'badge-ok', icon:'✅', bg:'#f0fdf4', signal:'ep AB2 韧性 +4.3%（69 → 72），AB→AB2% 21.1%', action:'持续观察'},
       {level:'OK', badge:'badge-ok', icon:'✅', bg:'', signal:'wlw AB2 微涨 +20%（5 → 6，绝对值小）', action:'持续观察'}
+    ]
+  },
+  "2026-04-06": {
+    title: "2026-04-06（周一）",
+    wowDate: "2026-03-30（上周一）",
+    latency: 2,
+    genDate: "2026-04-08",
+    verdict: "较周日环比回升，但周同比仍显著下滑。AB2 总量 169，距 500 目标仍有较大 gap。",
+    summary: {
+      webUV: 38339, webUVPrev: 61783,
+      appUV: 1048, appUVPrev: 1908,
+      ab: 619, abPrev: 972,
+      qdrAB: 392, qdrABPrev: 592,
+      rfqAB: 250, rfqABPrev: 423,
+      ab2: 169, ab2Prev: 252, ab2Color: "#dc2626"
+    },
+    trends: {
+      labels: ["03/24","03/25","03/26","03/27","03/28","03/29","03/30","03/31","04/01","04/02","04/03","04/04","04/05","04/06"],
+      epUV: [32149,32091,31606,28027,17956,18044,32261,31328,29651,28148,22906,15901,15375,20703],
+      wlwUV: [30389,31114,30201,25729,17338,19049,29522,27873,24577,23006,17507,13406,13981,17636],
+      epApp: [1685,1773,2523,2298,2877,2938,1495,1327,1052,1188,972,840,847,882],
+      wlwApp: [487,626,641,713,903,852,413,334,233,256,244,156,145,166],
+      epQDR: [367,369,386,298,205,205,364,400,331,312,277,216,223,300],
+      wlwQDR: [226,237,256,187,90,88,228,157,186,154,78,63,49,92],
+      epRFQ: [306,281,329,234,146,180,301,320,314,251,226,150,136,202],
+      wlwRFQ: [120,130,123,90,67,70,122,97,109,107,65,56,49,48],
+      epAB2: [183,183,208,145,61,69,212,210,194,180,143,92,72,162],
+      wlwAB2: [37,36,44,40,7,5,40,25,41,28,14,7,6,7],
+      epUVT7: [31395,30562,28742,26113,16940,18073,31807,32149,32091,31606,28027,17956,18044,32261],
+      wlwUVT7: [32784,31718,30219,26309,16554,19055,31158,30389,31114,30201,25729,17338,19049,29522],
+      epAppT7: [983,949,1312,1064,1002,1082,1475,1685,1773,2523,2298,2877,2938,1495],
+      wlwAppT7: [253,223,293,354,259,322,387,487,626,641,713,903,852,413],
+      epQDRT7: [353,344,306,248,200,198,435,367,369,386,298,205,205,364],
+      wlwQDRT7: [214,248,224,156,77,81,238,226,237,256,187,90,88,228],
+      epRFQT7: [295,296,297,223,123,153,367,306,281,329,234,146,180,301],
+      wlwRFQT7: [159,113,126,81,46,62,146,120,130,123,90,67,70,122],
+      epAB2T7: [187,179,163,134,55,60,256,183,183,208,145,61,69,212],
+      wlwAB2T7: [50,41,34,27,7,9,58,37,36,44,40,7,5,40]
+    },
+    drill: {
+      uvWebTotals: [],
+      uvWebRows: [
+        ['ep','Others','direct',3392,4892],['ep','Others','display_performance',175,157],['ep','Others','email',495,753],['ep','Others','geo',624,901],['ep','Others','organic_search',15246,24453],['ep','Others','organic_social',50,52],['ep','Others','other',22,29],['ep','Others','paid_search',22,22],['ep','Others','referral',522,778],['ep','Others','(unknown)',155,220],
+        ['wlw','Others','affiliate',7,25],['wlw','Others','direct',1554,2894],['wlw','Others','display_brand',1,0],['wlw','Others','display_performance',26,31],['wlw','Others','email',83,523],['wlw','Others','geo',189,302],['wlw','Others','organic_search',14326,23000],['wlw','Others','organic_social',5,4],['wlw','Others','organic_video',1,1],['wlw','Others','other',9,17],['wlw','Others','paid_search',1118,2122],['wlw','Others','referral',248,475],['wlw','Others','(unknown)',69,127]
+      ],
+      uvAppTotals: [['ep',882,1495],['wlw',166,413]],
+      abWebTotals: [],
+      abWebRows: [
+        ['ep','Others',false,'Others',142,187],['ep','Others',true,'Others',73,92],
+        ['wlw','Others',false,'Others',59,193],['wlw','Others',true,'Others',1,30]
+      ],
+      abSourceTotals: [
+        ['ep','app',false,86,111],['ep','app',true,54,73],['ep','alibaba',false,144,197],['ep','alibaba',true,35,53],
+        ['wlw','app',false,11,14],['wlw','app',true,3,3],['wlw','alibaba',false,65,111],['wlw','alibaba',true,3,7]
+      ]
+    },
+    anomalies: [
+      {level:'P0', badge:'badge-p0', icon:'❌ P0', bg:'#fef2f2', signal:'AB2 总量 -32.9%（252 → 169），距 500 目标 gap 仍大', action:'排查 AB2 回落主因（ep web/app/alibaba）'},
+      {level:'P0', badge:'badge-p0', icon:'❌ P0', bg:'#fef2f2', signal:'wlw AB2 -82.5%（40 → 7），web AB2 仅 1', action:'排查 wlw 线索质量与回复链路'},
+      {level:'P1', badge:'badge-p1', icon:'❌ P1', bg:'#fef2f2', signal:'Web UV -37.9%（61,783 → 38,339），Organic Search 与 Paid Search 同时走弱', action:'排查 SEO/SEA 同步掉量原因'},
+      {level:'P1', badge:'badge-p1', icon:'❌ P1', bg:'#fef2f2', signal:'App UV -45.1%（1,908 → 1,048）', action:'排查 App 流量来源与活跃机制'},
+      {level:'P1', badge:'badge-p1', icon:'❌ P1', bg:'#fef2f2', signal:'RFQ AB -40.9%（423 → 250）', action:'排查 RFQ 分发效率与 Alibaba 供给质量'},
+      {level:'P1', badge:'badge-p1', icon:'❌ P1', bg:'#fef2f2', signal:'QDR AB -33.8%（592 → 392）', action:'下钻 web/app/alibaba 的买家转化损失'},
+      {level:'OK', badge:'badge-ok', icon:'✅', bg:'#f0fdf4', signal:'较昨日环比回升：AB2 78 → 169，QDR AB 272 → 392', action:'持续观察周内趋势，避免周末低基数干扰'}
     ]
   }
 };
