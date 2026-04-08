@@ -173,6 +173,23 @@
   </div>
 
   <div class="card">
+    <h2>转化率趋势（14 天）</h2>
+    <p style="color:#64748b; margin-bottom:10px; font-size:12px;">UV→AB% = AB/(Web UV+App UV)，AB→AB2% = AB2/AB。趋势 AB 用 QDR+RFQ 合计近似（含重叠）。实线 = 当前，虚线 = t-7。</p>
+    <div class="chart-row">
+      <div>
+        <h3>UV→AB%（current vs t-7）</h3>
+        <div class="chart-meta" id="uvAbMeta"></div>
+        <div class="chart-container"><canvas id="uvAbChart"></canvas></div>
+      </div>
+      <div>
+        <h3>AB→AB2%（current vs t-7）</h3>
+        <div class="chart-meta" id="abAb2Meta"></div>
+        <div class="chart-container"><canvas id="abAb2Chart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
     <h2>UV 下钻（漏斗第一层）</h2>
     <p class="section-note">Web 按 <code>PC / WAP / Others -> Channel</code> 展开；App 只看总量，Others 已合并低频渠道和未识别项。</p>
     <div id="uv-drill"></div>
@@ -569,15 +586,26 @@ function renderTrendMeta(id, items) {
   const el=document.getElementById(id); if(!el)return;
   el.innerHTML=items.map((it,i)=>`<div class="metric ${i===0?'primary':''}"><span class="name">${it.name}</span><span class="value">${formatNumber(it.current)}</span><span class="wow ${wowClass(it.current,it.prev)}">（WoW ${wowText(it.current,it.prev)}）</span></div>`).join('');
 }
+function renderTrendMetaPct(id, items) {
+  const el=document.getElementById(id); if(!el)return;
+  el.innerHTML=items.map((it,i)=>{
+    const delta=(it.current-it.prev).toFixed(1);
+    const dir=it.current>it.prev?'up':it.current<it.prev?'down':'neutral';
+    return `<div class="metric ${i===0?'primary':''}"><span class="name">${it.name}</span><span class="value">${it.current.toFixed(1)}%</span><span class="wow ${dir}">（${delta>0?'+':''}${delta}pp）</span></div>`;
+  }).join('');
+}
 
 function destroyCharts() { Object.values(chartInstances).forEach(c=>c.destroy()); for(const k in chartInstances) delete chartInstances[k]; }
 
-function makeChart(id, labels, datasets) {
+function makeChart(id, labels, datasets, pct) {
+  const yTicks = {font:{size:10}};
+  if (pct) yTicks.callback = v => v.toFixed(1)+'%';
   const opts = {
     responsive:true, maintainAspectRatio:false,
     interaction:{mode:'index',intersect:false},
-    plugins:{legend:{position:'top',labels:{font:{size:11},filter:i=>!i.text.endsWith(' t-7')}}},
-    scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:false,ticks:{font:{size:10}}}}
+    plugins:{legend:{position:'top',labels:{font:{size:11},filter:i=>!i.text.endsWith(' t-7')}},
+      tooltip:{callbacks:{label:ctx=>{const v=ctx.parsed.y; return ctx.dataset.label+': '+(pct?(v!=null?v.toFixed(2)+'%':'—'):v);}}}},
+    scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:false,ticks:yTicks}}
   };
   chartInstances[id] = new Chart(document.getElementById(id), { type:'line', data:{labels,datasets}, options:opts });
 }
@@ -605,6 +633,31 @@ function renderCharts(t) {
   makeChart('qdrChart',L,[{label:'全站',data:totalQDR,...currentLine(totC)},{label:'全站 t-7',data:totalQDRT7,...compareLine(totC)},{label:'ep',data:t.epQDR,...currentLine(epC)},{label:'ep t-7',data:t.epQDRT7,...compareLine(epC)},{label:'wlw',data:t.wlwQDR,...currentLine(wlwC)},{label:'wlw t-7',data:t.wlwQDRT7,...compareLine(wlwC)}]);
   makeChart('rfqChart',L,[{label:'全站',data:totalRFQ,...currentLine(totC)},{label:'全站 t-7',data:totalRFQT7,...compareLine(totC)},{label:'ep',data:t.epRFQ,...currentLine(epC)},{label:'ep t-7',data:t.epRFQT7,...compareLine(epC)},{label:'wlw',data:t.wlwRFQ,...currentLine(wlwC)},{label:'wlw t-7',data:t.wlwRFQT7,...compareLine(wlwC)}]);
   makeChart('ab2Chart',L,[{label:'全站',data:totalAB2,...currentLine(totC)},{label:'全站 t-7',data:totalAB2T7,...compareLine(totC)},{label:'ep',data:t.epAB2,...currentLine(epC)},{label:'ep t-7',data:t.epAB2T7,...compareLine(epC)},{label:'wlw',data:t.wlwAB2,...currentLine(wlwC)},{label:'wlw t-7',data:t.wlwAB2T7,...compareLine(wlwC)}]);
+
+  // --- Conversion Rate Charts (AB uses QDR+RFQ unique union approximation) ---
+  const pctDiv = (a,b) => a.map((v,i)=> b[i]?+(v/b[i]*100).toFixed(2):null);
+
+  const epTotalUV=sum(t.epUV,t.epApp), wlwTotalUV=sum(t.wlwUV,t.wlwApp);
+  const epTotalUVT7=sum(t.epUVT7,t.epAppT7), wlwTotalUVT7=sum(t.wlwUVT7,t.wlwAppT7);
+  const allUV=sum(epTotalUV,wlwTotalUV), allUVT7=sum(epTotalUVT7,wlwTotalUVT7);
+
+  const allAB=sum(totalQDR,totalRFQ), allABT7=sum(totalQDRT7,totalRFQT7);
+  const epAB=sum(t.epQDR,t.epRFQ), epABT7=sum(t.epQDRT7,t.epRFQT7);
+  const wlwAB=sum(t.wlwQDR,t.wlwRFQ), wlwABT7=sum(t.wlwQDRT7,t.wlwRFQT7);
+
+  const uvAbTot=pctDiv(allAB,allUV), uvAbTotT7=pctDiv(allABT7,allUVT7);
+  const uvAbEp=pctDiv(epAB,epTotalUV), uvAbEpT7=pctDiv(epABT7,epTotalUVT7);
+  const uvAbWlw=pctDiv(wlwAB,wlwTotalUV), uvAbWlwT7=pctDiv(wlwABT7,wlwTotalUVT7);
+
+  const abAb2Tot=pctDiv(totalAB2,allAB), abAb2TotT7=pctDiv(totalAB2T7,allABT7);
+  const abAb2Ep=pctDiv(t.epAB2,epAB), abAb2EpT7=pctDiv(t.epAB2T7,epABT7);
+  const abAb2Wlw=pctDiv(t.wlwAB2,wlwAB), abAb2WlwT7=pctDiv(t.wlwAB2T7,wlwABT7);
+
+  renderTrendMetaPct('uvAbMeta',[{name:'总',current:uvAbTot[13]||0,prev:uvAbTotT7[13]||0},{name:'ep',current:uvAbEp[13]||0,prev:uvAbEpT7[13]||0},{name:'wlw',current:uvAbWlw[13]||0,prev:uvAbWlwT7[13]||0}]);
+  renderTrendMetaPct('abAb2Meta',[{name:'总',current:abAb2Tot[13]||0,prev:abAb2TotT7[13]||0},{name:'ep',current:abAb2Ep[13]||0,prev:abAb2EpT7[13]||0},{name:'wlw',current:abAb2Wlw[13]||0,prev:abAb2WlwT7[13]||0}]);
+
+  makeChart('uvAbChart',L,[{label:'全站',data:uvAbTot,...currentLine(totC)},{label:'全站 t-7',data:uvAbTotT7,...compareLine(totC)},{label:'ep',data:uvAbEp,...currentLine(epC)},{label:'ep t-7',data:uvAbEpT7,...compareLine(epC)},{label:'wlw',data:uvAbWlw,...currentLine(wlwC)},{label:'wlw t-7',data:uvAbWlwT7,...compareLine(wlwC)}],true);
+  makeChart('abAb2Chart',L,[{label:'全站',data:abAb2Tot,...currentLine(totC)},{label:'全站 t-7',data:abAb2TotT7,...compareLine(totC)},{label:'ep',data:abAb2Ep,...currentLine(epC)},{label:'ep t-7',data:abAb2EpT7,...compareLine(epC)},{label:'wlw',data:abAb2Wlw,...currentLine(wlwC)},{label:'wlw t-7',data:abAb2WlwT7,...compareLine(wlwC)}],true);
 }
 
 function renderDrills(drill) {
