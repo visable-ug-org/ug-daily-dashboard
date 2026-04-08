@@ -33,7 +33,7 @@
   .dab2-detail { margin-top: 10px; font-size: 13px; color: #64748b; display: flex; gap: 24px; }
   .dab2-detail span { display: inline-flex; align-items: center; gap: 4px; }
 
-  .summary-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
   .summary-item { text-align: center; padding: 16px; background: #f8f9fa; border-radius: 8px; }
   .summary-item .label { font-size: 12px; color: #666; margin-bottom: 4px; }
   .summary-item .value { font-size: 28px; font-weight: 700; }
@@ -548,9 +548,21 @@ function renderSummary(s) {
     <div style="text-align:center;"><div style="font-size:11px;color:#666;">QDR</div><div style="font-size:22px;font-weight:700;">${formatNumber(s.qdrAB)}</div><div class="change ${wowClass(s.qdrAB,s.qdrABPrev)}" style="font-size:12px;">${wowText(s.qdrAB,s.qdrABPrev)}</div></div>
     <div style="text-align:center;"><div style="font-size:11px;color:#666;">RFQ</div><div style="font-size:22px;font-weight:700;">${formatNumber(s.rfqAB)}</div><div class="change ${wowClass(s.rfqAB,s.rfqABPrev)}" style="font-size:12px;">${wowText(s.rfqAB,s.rfqABPrev)}</div></div>
   </div></div>`;
+  const totalUV = s.webUV + s.appUV;
+  const totalUVPrev = s.webUVPrev + s.appUVPrev;
+  const uvToAb = totalUV ? (s.ab / totalUV * 100) : 0;
+  const uvToAbPrev = totalUVPrev ? (s.abPrev / totalUVPrev * 100) : 0;
+  const abToAb2 = s.ab ? (s.ab2 / s.ab * 100) : 0;
+  const abToAb2Prev = s.abPrev ? (s.ab2Prev / s.abPrev * 100) : 0;
+  function pctItem(label, val, prev) {
+    const dir = val > prev ? 'up' : val < prev ? 'down' : 'neutral';
+    const delta = (val - prev).toFixed(1);
+    return `<div class="summary-item"><div class="label">${label}</div><div class="value">${val.toFixed(1)}%</div><div class="change ${dir}">vs 上周 ${prev.toFixed(1)}%（${delta > 0 ? '+' : ''}${delta}pp）</div></div>`;
+  }
   document.getElementById('summaryGrid').innerHTML =
     item('Web UV',s.webUV,s.webUVPrev) + item('App UV',s.appUV,s.appUVPrev) +
-    item('AB（全口径）',s.ab,s.abPrev) + abSplit + item('AB2（全口径）',s.ab2,s.ab2Prev,s.ab2Color);
+    item('AB（全口径）',s.ab,s.abPrev) + abSplit + item('AB2（全口径）',s.ab2,s.ab2Prev,s.ab2Color) +
+    pctItem('UV→AB%', uvToAb, uvToAbPrev) + pctItem('AB→AB2%', abToAb2, abToAb2Prev);
 }
 
 function renderTrendMeta(id, items) {
